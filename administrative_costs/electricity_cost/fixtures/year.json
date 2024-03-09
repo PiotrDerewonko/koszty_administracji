@@ -1,0 +1,1 @@
+[{"model": "electricity_cost.year", "pk": 1, "fields": {"name": "2023"}}, {"model": "electricity_cost.year", "pk": 2, "fields": {"name": "2024"}}, {"model": "electricity_cost.year", "pk": 3, "fields": {"name": "2025"}}, {"model": "electricity_cost.year", "pk": 4, "fields": {"name": "2026"}}, {"model": "electricity_cost.year", "pk": 5, "fields": {"name": "2027"}}]
