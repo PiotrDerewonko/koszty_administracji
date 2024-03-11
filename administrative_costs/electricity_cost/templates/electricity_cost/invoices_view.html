@@ -1,0 +1,8 @@
+{% extends 'main.html' %}
+{% block content %}
+    {% for i in invoices_list %}
+        {{ i.cost }}<br>
+
+    {% endfor %}
+
+{% endblock %}
