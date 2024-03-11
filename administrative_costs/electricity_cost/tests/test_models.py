@@ -1,5 +1,5 @@
 from django.test import TestCase
-from . import EnergyMeters, MeterShares, MeterLocations
+from . import EnergyMeters, MeterShares, MeterLocations, Month, Year, Invoices, EnergySuppliers
 from django.core.exceptions import ValidationError
 
 class EnergyMetersTest(TestCase):
@@ -27,6 +27,23 @@ class EnergyMetersTest(TestCase):
     def test_energy_meters_str(self):
         e1 = EnergyMeters.objects.get(pk=1)
         self.assertEqual(str(e1), 'Test udzial 0.3333')
+
+class InvoicesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        Month.objects.create(name='styczen', number_of_month=1)
+        Year.objects.create(name=2024)
+        EnergySuppliers.objects.create(name='PGE')
+
+    def setUp(self):
+        Invoices.objects.create(invoices_number='Testowa Faktura', cost=1, cost_per_1_mwh=1, numbers_mwh=1, energysuppliers_id=1,
+                                biling_month_id=1, biling_year_id=1)
+
+    def test_create_invoice(self):
+        i1 = Invoices.objects.get(pk=1)
+        self.assertEqual(str(i1), 'Testowa Faktura')
+
+
 
 
 

@@ -9,8 +9,8 @@ class Invoices(models.Model):
     numbers_mwh = models.FloatField(verbose_name='Ilość zużytych MWH')
     energysuppliers = models.ForeignKey('EnergySuppliers', on_delete=models.PROTECT,
                                         verbose_name='Dostawca')
-    biling_month = models.IntegerField(verbose_name='Miesiąc rozliczeniowy')
-    biling_year = models.IntegerField(verbose_name='Rok rozliczeniowy')
+    biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
+    biling_year = models.ForeignKey('Year', verbose_name='Rok rozliczeniowy', on_delete=models.PROTECT)
 
     def __str__(self):
         return self.invoices_number
