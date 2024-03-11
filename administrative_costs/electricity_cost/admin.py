@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import EnergyMeters, EnergySuppliers, Invoices, MeterLocations, FinancialEntity, MeterReading, Month, Year
+from .models import (EnergyMeters, EnergySuppliers, Invoices, MeterLocations, FinancialEntity, MeterReading, Month,
+                     Year,
+                     CounterUsage)
 
 
 class InvoicesAdmin(admin.ModelAdmin):
@@ -28,11 +30,18 @@ class MeterReadingAdmin(admin.ModelAdmin):
     list_display = [field.name for field in MeterReading._meta.fields]
     list_filter = ['biling_month', 'biling_year', 'energy_meter']
 
+
 class MonthAdmin(admin.ModelAdmin):
     list_display = ['name', 'number_of_month']
 
+
 class YearAdmin(admin.ModelAdmin):
     list_display = ['name']
+
+
+class CounterUsageAdmin(admin.ModelAdmin):
+    list_display = ['energy_meter', 'biling_month', 'biling_year', 'usage']
+    list_filter = ['biling_month', 'biling_year', 'energy_meter']
 
 
 admin.site.register(Invoices, InvoicesAdmin)
@@ -43,4 +52,4 @@ admin.site.register(FinancialEntity)
 admin.site.register(MeterReading, MeterReadingAdmin)
 admin.site.register(Month, MonthAdmin)
 admin.site.register(Year, YearAdmin)
-
+admin.site.register(CounterUsage, CounterUsageAdmin)
