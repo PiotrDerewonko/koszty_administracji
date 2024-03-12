@@ -4,27 +4,56 @@
 
 
 {% block content %}
-    <table>
-        <thead>
-        <tr>
-            <th><a href="?sort=cost">Koszt</a></th>
-            <!-- Dodaj inne nagłówki kolumn według potrzeb -->
-        </tr>
-        </thead>
-        <tbody>
-        {% for obj in object_list %}
+    <div class="table-container">
+        <table class="my-table">
+            <thead>
             <tr>
-                <td>{{ obj.cost }}</td>
-                <!-- Dodaj inne pola według potrzeb -->
+                <th>
+                    <a href="?{% if sort == 'id' %}sort=-id{% else %}sort=id{% endif %}">Identyfikator</a></th>
+                <th>
+                    <a href="?{% if sort == 'invoices_number' %}sort=-invoices_number
+                        {% else %}{% if sort == '-invoices_number' %}sort=-id{% else %}sort=invoices_number{% endif %}{% endif %}">Numer
+                        faktury</a></th>
+                <th><a href="?{% if sort == 'cost' %}sort=-cost
+                    {% else %}{% if sort == '-cost' %}sort=-id{% else %}sort=cost{% endif %}{% endif %}">Koszt</a></th>
+                <th><a href="?{% if sort == 'numbers_mwh' %}sort=-numbers_mwh
+                    {% else %}{% if sort == '-numbers_mwh' %}sort=-id{% else %}sort=numbers_mwh{% endif %}{% endif %}">Ilość
+                    MwH</a></th>
+                <th><a href="?{% if sort == 'energysuppliers' %}sort=-energysuppliers
+                    {% else %}{% if sort == '-energysuppliers' %}sort=-id{% else %}sort=energysuppliers{% endif %}{% endif %}">Dostawca</a>
+                </th>
+                <th>
+                    <a href="?{% if sort == 'biling_month__number_of_month' %}sort=-biling_month__number_of_month
+                        {% else %}{% if sort == '-biling_month__number_of_month' %}sort=-id{% else %}sort=biling_month__number_of_month{% endif %}{% endif %}">Miesiąc
+                        Rozrachunkowy</a>
+                </th>
+                <th><a href="?{% if sort == 'biling_year' %}sort=-biling_year
+                    {% else %}{% if sort == '-biling_year' %}sort=-id{% else %}sort=biling_year{% endif %}{% endif %}">Rok
+                    Rozrachunkowy</a>
+                </th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for obj in object_list %}
+                <tr>
+                    <td>{{ obj.id }}</td>
+                    <td>{{ obj.invoices_number }}</td>
+                    <td>{{ obj.cost }}</td>
+                    <td>{{ obj.numbers_mwh }}</td>
+                    <td>{{ obj.energysuppliers }}</td>
+                    <td>{{ obj.biling_month }}</td>
+                    <td>{{ obj.biling_year }}</td>
+                    <!-- Dodaj inne pola według potrzeb -->
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
     <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
             <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">Poprzednie</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Poprzednia</a>
         {% endif %}
         <span class="current">
             Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}.
@@ -32,7 +61,7 @@
 
         {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}">Następne</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Ostatnia &raquo;</a>
         {% endif %}
     </span>
     </div>
