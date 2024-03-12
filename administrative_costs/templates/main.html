@@ -1,8 +1,45 @@
 {% load django_bootstrap5 %}
-testetstss
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    {# Load CSS and JavaScript #}
+    {% bootstrap_css %}
+    <meta charset="UTF-8">
+    <title>{% block title %}{{ title }}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+</head>
+
+
+<body>
+
+<header class="logo">
+    <nav>
+        <ul>
+            <li><a {% if active_tab == 'post_list' %} class='active' {% endif %}
+                                                      href="{% url 'electricity_cost:lista_faktur' %}">Lista faktur</a>
+            </li>
+
+
+            {#            <li>{% if user.is_authenticated %}#}
+            {#                <p class="nav-link">#}
+            {#                    {{ user.username }} | <a href="{% url 'logout' %}">logout</a>#}
+            {#                </p>#}
+            {#            {% else %}#}
+            {#                <a class="nav-link" href="{% url 'login' %}">login</a>#}
+            {#            {% endif %}</li>#}
+        </ul>
+    </nav>
+    tutaj dorobic okruszki
+
+</header>
+{% bootstrap_messages %}
 
 {% block content %}
 
 {% endblock %}
 
-za blokiem
+
+</body>
+</html>

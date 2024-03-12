@@ -1,0 +1,38 @@
+header {
+    background-color: #f0f0f0;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between; /* Rozłożenie elementów na przestrzeni poziomej */
+    align-items: center; /* Wyśrodkowanie elementów na przestrzeni pionowej */
+}
+
+.logo {
+    /* Możesz dostosować stylowanie logo według własnych preferencji */
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex; /* Użyj flexboxa do zarządzania elementami nawigacji */
+}
+
+nav ul li {
+    margin-right: 10px;
+    flex: 1; /* Rozciąganie elementów li, aby równomiernie zajmowały dostępną przestrzeń */
+}
+
+.active {
+    background-color: #04AA6D;
+}
+
+nav ul li:last-child {
+    margin-right: 0; /* Usuwa margines po prawej stronie ostatniego elementu */
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #333;
+}
+
+

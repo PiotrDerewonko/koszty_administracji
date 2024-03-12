@@ -1,8 +1,41 @@
 {% extends 'main.html' %}
-{% block content %}
-    {% for i in invoices_list %}
-        {{ i.cost }}<br>
 
-    {% endfor %}
+<title>{% block title %}{{ title }}{% endblock %}</title>
+
+
+{% block content %}
+    <table>
+        <thead>
+            <tr>
+                <th><a href="?sort=cost">Kosztaaaa</a></th>
+                <!-- Dodaj inne nagłówki kolumn według potrzeb -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for obj in object_list %}
+            <tr>
+                <td>{{ obj.cost }}</td>
+                <!-- Dodaj inne pola według potrzeb -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        <span class="step-links">
+            {% if table.page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ table.page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Strona {{ table.page_obj.number }} z {{ table.page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if table.page_obj.has_next %}
+                <a href="?page={{ table.page_obj.next_page_number }}">next</a>
+                <a href="?page={{ table.page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 
 {% endblock %}
