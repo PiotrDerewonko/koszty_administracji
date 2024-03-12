@@ -35,4 +35,15 @@ nav ul li a {
     color: #333;
 }
 
+/* Dodaj marginesy dla tabeli */
+.table-container {
+    margin-left: 20px; /* Margines po lewej stronie */
+    margin-right: 20px; /* Margines po prawej stronie */
+}
+
+/* Ustaw szerokość tabeli */
+.my-table {
+    width: calc(100% - 40px); /* 100% szerokości - suma marginesów po obu stronach */
+}
+
 
