@@ -9,12 +9,19 @@ from django.shortcuts import render, redirect
 
 @method_decorator(login_required, name='dispatch')
 class InvoicesListView(ListView):
+    #todo dorobic filtrowanie faktur
+    '''Widok listy faktur oparty na ListView. Widok ma slużyć do przeglądania oraz sortowania faktur. Dodatkowo
+    formularz ma dawac mozliwosc przejscie do edycji danej faktury, a w przyszlosci filtrownia faktur'''
     model = Invoices
     template_name = 'electricity_cost/invoices_view.html'
     paginate_by = 20
     ordering = ['-id']  # Ustawienie domyślnego sortowania
 
     def get_queryset(self):
+        """
+         Pobiera zapytanie dla listy faktur.
+         Sortuje faktury zgodnie z parametrem sort, jeśli jest dostępny.
+        """
         queryset = super().get_queryset()
         # Pobranie wartości parametru sort z adresu URL
         sort_param = self.request.GET.get('sort')
@@ -24,20 +31,29 @@ class InvoicesListView(ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
+        '''
+        pobiera parametr sort
+        '''
         context = super().get_context_data(**kwargs)
-        sort_param = self.request.GET.get('sort', 'cost')  # Domyślna wartość sortowania
+        sort_param = self.request.GET.get('sort', 'cost')
         context['sort'] = sort_param
         return context
 
 @login_required
-def add_metere_readings_maunaly(request):
+def add_meter_readings_maunaly(request):
+    '''
+    widok dodawania recznego listy faktur. Do formualrza trafia aktualna lista licznikow z modelu, poczym jest
+    generoweany formularz ktory zawiera wszystkie aktualne liczniki.
+    '''
     energy_meter_fields = EnergyMeters.objects.all()
     EnergyMeterForm = get_energy_meter_form(energy_meter_fields)
     if request.method == 'POST':
         form = EnergyMeterForm(request.POST)
         if form.is_valid():
-            # Obsłuż dane z formularza
-            pass
+            month = request.POST.get('month')
+            year = request.POST.get('year')
+            date_of_read = request.POST.get('date_of_read')
+
     else:
         form = EnergyMeterForm()
 
