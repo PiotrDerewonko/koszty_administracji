@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import (EnergyMeters, EnergySuppliers, Invoices, MeterLocations, FinancialEntity, MeterReading, Month,
-                     Year,
-                     CounterUsage)
+                     Year, CounterUsage, EnergyMeterTree)
 
 
 class InvoicesAdmin(admin.ModelAdmin):
@@ -43,6 +42,9 @@ class CounterUsageAdmin(admin.ModelAdmin):
     list_display = ['energy_meter', 'biling_month', 'biling_year', 'usage']
     list_filter = ['biling_month', 'biling_year', 'energy_meter']
 
+class EnergyMeterTreeAdmin(admin.ModelAdmin):
+    list_display = ['id', 'energy_meter_main', 'energy_meter_submain']
+
 
 admin.site.register(Invoices, InvoicesAdmin)
 admin.site.register(MeterLocations, MeterLocationsAdmin)
@@ -53,3 +55,4 @@ admin.site.register(MeterReading, MeterReadingAdmin)
 admin.site.register(Month, MonthAdmin)
 admin.site.register(Year, YearAdmin)
 admin.site.register(CounterUsage, CounterUsageAdmin)
+admin.site.register(EnergyMeterTree, EnergyMeterTreeAdmin)

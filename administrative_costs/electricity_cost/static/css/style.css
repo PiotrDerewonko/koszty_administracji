@@ -37,13 +37,47 @@ nav ul li a {
 
 /* Dodaj marginesy dla tabeli */
 .table-container {
-    margin-left: 20px; /* Margines po lewej stronie */
-    margin-right: 20px; /* Margines po prawej stronie */
+    margin-left: 100px; /* Margines po lewej stronie */
+    margin-right: 100px; /* Margines po prawej stronie */
+    font-family: 'Arial', monospace;
+    font-size: 16px;
+    line-height: 1.5;
+    color: black;
 }
 
 /* Ustaw szerokość tabeli */
 .my-table {
-    width: calc(100% - 40px); /* 100% szerokości - suma marginesów po obu stronach */
+    width: calc(100% - 200px); /* 100% szerokości - suma marginesów po obu stronach */
 }
 
+a {
+    color: #6c757d; /* Kolor linków */
+    text-decoration: none;
+}
 
+a:hover {
+    text-decoration: none; /* Stylowanie hovera nad linkami */
+}
+
+tr {
+  border-bottom: 1px solid black; /* Grubość i kolor obramowania wierszy */
+}
+
+td{
+  border: 1px solid black; /* Grubość i kolor obramowania komórek */
+}
+
+.no-border {
+    border: none;
+    color: white; /* Kolor tekstu biały */
+}
+
+th {
+  border: 3px solid black; /* Grubość i kolor obramowania komórek */
+}
+
+.inline-field {
+    display: inline-block;
+    width: 45%; /* Dostosuj szerokość według własnych potrzeb */
+    margin-right: 5px; /* Odstęp między polami */
+}

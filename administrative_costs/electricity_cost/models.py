@@ -75,6 +75,7 @@ class FinancialEntity(models.Model):
     def __str__(self):
         return self.name
 
+
 class Month(models.Model):
     name = models.CharField(max_length=250, verbose_name='Miesiąc')
     number_of_month = models.IntegerField()
@@ -100,6 +101,7 @@ class MeterReading(models.Model):
     def __str__(self):
         return f'''Odczyt licznika {self.energy_meter} z dnia {self.date_of_reading}'''
 
+
 class CounterUsage(models.Model):
     energy_meter = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT, verbose_name='Licznik')
     biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
@@ -110,4 +112,11 @@ class CounterUsage(models.Model):
         return f'''Zużycie licznika z {self.biling_year} {self.biling_month} w wysokości {self.usage}'''
 
 
-
+class EnergyMeterTree(models.Model):
+    energy_meter_main = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT, related_name='energy_meter_main',
+                                          verbose_name='Licznik nadrzędny')
+    energy_meter_submain = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT,
+                                             related_name='energy_meter_submain',
+                                             verbose_name='Licznik poddrzędny')
+    def __str__(self):
+        return f'''Licznik nadrzędny {self.energy_meter_main} w {self.energy_meter_submain}'''
