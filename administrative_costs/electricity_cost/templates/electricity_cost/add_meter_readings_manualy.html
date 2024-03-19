@@ -1,0 +1,45 @@
+{% extends 'electricity_cost/electricity_cost_main.html' %}
+
+<title>{% block title %}{{ title }}{% endblock %}</title>
+
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="table-container">
+            <table class="my-table">
+                <thead>
+                <tr>
+                    <th>Rok rozliczeniowy</th>
+                    <th>Miesiąc rozliczeniowy</th>
+                </tr>
+                </thead>
+
+                </tr>
+                <tr>
+                    <td>{{ form.year }}</td>
+                    <td>{{ form.month }}</td>
+                </tr>
+                <tr>
+                    <td class="no-border">pusty wiersz</td>
+                    <td class="no-border">pusto wiersz</td>
+                </tr>
+                <thead>
+                <tr>
+                    <th>Nazwa licznika</th>
+                    <th>Wartość odczytu</th>
+                </tr>
+                </thead>
+                {% for i in form %}
+                    {% if i.name != 'year' and i.name != 'month' %}
+                        <tr>
+                            <td>{{ i.name }}</td>
+                            <td>{{ i }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}
