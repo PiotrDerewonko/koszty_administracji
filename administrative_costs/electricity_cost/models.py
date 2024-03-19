@@ -95,21 +95,25 @@ class MeterReading(models.Model):
     energy_meter = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT, verbose_name='Licznik')
     date_of_reading = models.DateField(verbose_name='Data odczytu')
     meter_reading = models.FloatField(verbose_name='Odczyt licznika')
-    biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
-    biling_year = models.ForeignKey('Year', verbose_name='Rok rozliczeniowy', on_delete=models.PROTECT)
+    reading_name = models.ForeignKey('MeterReadingsList', on_delete=models.PROTECT, verbose_name='Nazwa odczytu')
 
     def __str__(self):
         return f'''Odczyt licznika {self.energy_meter} z dnia {self.date_of_reading}'''
 
 
 class CounterUsage(models.Model):
+    '''Model ktory reprezentuje jaki bylo zuzcyie danego licznika  w danym miesiacu i roku rozliczeniowym.
+    Celem modelu jest odziolowanie odczytow licznika od zuzycia, zwlaszcz przy edycji danych.
+    Poczas edycji danych bedzie uruchamiany osobny skrypt ktory saksuje z tego modelu zuzycie dla edytowanego miesiaca i
+    roku oraz kolejnego, a nastwpnie doda dane na nowo. Przy dodwaniu nowoych danych wspomnialy sktrp
+    nie bedzie uruchamiany'''
     energy_meter = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT, verbose_name='Licznik')
+    usage = models.FloatField(verbose_name='Zużycie licznika')
     biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
     biling_year = models.ForeignKey('Year', verbose_name='Rok rozliczeniowy', on_delete=models.PROTECT)
-    usage = models.FloatField(verbose_name='Zużycie licznika')
 
     def __str__(self):
-        return f'''Zużycie licznika z {self.biling_year} {self.biling_month} w wysokości {self.usage}'''
+        return f'''Zużycie licznika z w wysokości {self.usage}'''
 
 
 class EnergyMeterTree(models.Model):
@@ -118,5 +122,20 @@ class EnergyMeterTree(models.Model):
     energy_meter_submain = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT,
                                              related_name='energy_meter_submain',
                                              verbose_name='Licznik poddrzędny')
+
     def __str__(self):
         return f'''Licznik nadrzędny {self.energy_meter_main} w {self.energy_meter_submain}'''
+
+
+class MeterReadingsList(models.Model):
+    '''Model w ktorym okreslamy, nazwe robocza odczytu oraz miesiac i rok obrachunnkowy. Model ma dwa zadania:
+    1) nie dopusici do sytuacji, gdzie ktos doda np recznie dwa razy te same dane, np liczniki spisywane recznie
+    2) latwe wyszukiwanie w tabeli z odczytami, odczytow dotyczacych danego roku i miesiaca'''
+    meter_reading_name = models.CharField(max_length=100, verbose_name='Nazwa odczytu')
+    biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
+    biling_year = models.ForeignKey('Year', verbose_name='Rok rozliczeniowy', on_delete=models.PROTECT)
+    def __str__(self):
+        return f'Odczyt o nazwie: {self.meter_reading_name} za rok: {self.biling_year} oraz miesiac {self.biling_month}'
+
+    class Meta:
+        unique_together = ['biling_month', 'biling_year']

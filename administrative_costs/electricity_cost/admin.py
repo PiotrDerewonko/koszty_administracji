@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (EnergyMeters, EnergySuppliers, Invoices, MeterLocations, FinancialEntity, MeterReading, Month,
-                     Year, CounterUsage, EnergyMeterTree)
+                     Year, CounterUsage, EnergyMeterTree, MeterReadingsList)
 
 
 class InvoicesAdmin(admin.ModelAdmin):
@@ -27,7 +27,7 @@ class EnergySuppliersAdmin(admin.ModelAdmin):
 
 class MeterReadingAdmin(admin.ModelAdmin):
     list_display = [field.name for field in MeterReading._meta.fields]
-    list_filter = ['biling_month', 'biling_year', 'energy_meter']
+    list_filter = ['energy_meter']
 
 
 class MonthAdmin(admin.ModelAdmin):
@@ -39,11 +39,15 @@ class YearAdmin(admin.ModelAdmin):
 
 
 class CounterUsageAdmin(admin.ModelAdmin):
-    list_display = ['energy_meter', 'biling_month', 'biling_year', 'usage']
-    list_filter = ['biling_month', 'biling_year', 'energy_meter']
+    list_display = ['id', 'energy_meter', 'usage', 'biling_month', 'biling_year']
+    list_filter = ['energy_meter']
+
 
 class EnergyMeterTreeAdmin(admin.ModelAdmin):
     list_display = ['id', 'energy_meter_main', 'energy_meter_submain']
+
+class MeterReadingListAdmin(admin.ModelAdmin):
+    list_display = ['id', 'meter_reading_name', 'biling_month', 'biling_year']
 
 
 admin.site.register(Invoices, InvoicesAdmin)
@@ -56,3 +60,4 @@ admin.site.register(Month, MonthAdmin)
 admin.site.register(Year, YearAdmin)
 admin.site.register(CounterUsage, CounterUsageAdmin)
 admin.site.register(EnergyMeterTree, EnergyMeterTreeAdmin)
+admin.site.register(MeterReadingsList, MeterReadingListAdmin)

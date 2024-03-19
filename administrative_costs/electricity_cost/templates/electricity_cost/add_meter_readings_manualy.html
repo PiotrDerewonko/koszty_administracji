@@ -12,6 +12,7 @@
                 <tr>
                     <th>Rok rozliczeniowy</th>
                     <th>Miesiąc rozliczeniowy</th>
+                    <th>Data odczytu</th>
                 </tr>
                 </thead>
 
@@ -19,11 +20,14 @@
                 <tr>
                     <td>{{ form.year }}</td>
                     <td>{{ form.month }}</td>
+                    <td>{{ form.date_of_read }}</td>
                 </tr>
                 <tr>
                     <td class="no-border">pusty wiersz</td>
                     <td class="no-border">pusto wiersz</td>
                 </tr>
+            </table>
+            <table class="my-table">
                 <thead>
                 <tr>
                     <th>Nazwa licznika</th>
@@ -31,7 +35,7 @@
                 </tr>
                 </thead>
                 {% for i in form %}
-                    {% if i.name != 'year' and i.name != 'month' %}
+                    {% if i.name != 'year' and i.name != 'month' and i.name != 'date_of_read' %}
                         <tr>
                             <td>{{ i.name }}</td>
                             <td>{{ i }}</td>
@@ -40,6 +44,6 @@
                 {% endfor %}
             </table>
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit">Zapisz</button>
     </form>
 {% endblock %}

@@ -10,6 +10,8 @@ def get_energy_meter_form(energy_meters_fields):
                                        widget=forms.Select(attrs={'class': 'inline-field'})),
         'month': forms.ModelChoiceField(queryset=Month.objects.all(), label='Miesiąc Rozliczeniowy', required=True,
                                         widget=forms.Select(attrs={'class': 'inline-field'})),
+        'date_of_read': forms.DateField(label='Data odczytu', required=True,
+                                        widget=forms.DateInput(attrs={'type': 'date'}))
     }
 
     for field in energy_meters_fields:
