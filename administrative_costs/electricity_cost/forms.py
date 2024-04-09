@@ -2,6 +2,7 @@
 
 from django import forms
 from .models import EnergyMeters, Month, Year
+from django.core.validators import FileExtensionValidator
 
 
 def get_energy_meter_form(energy_meters_fields):
@@ -11,7 +12,11 @@ def get_energy_meter_form(energy_meters_fields):
         'month': forms.ModelChoiceField(queryset=Month.objects.all(), label='Miesiąc Rozliczeniowy', required=True,
                                         widget=forms.Select(attrs={'class': 'inline-field'})),
         'date_of_read': forms.DateField(label='Data odczytu', required=True,
-                                        widget=forms.DateInput(attrs={'type': 'date'}))
+                                        widget=forms.DateInput(attrs={'type': 'date'})),
+        'image': forms.FileField(label='Dodaj jeden plik ze zdjęciami', required=False
+                                 , validators=[
+                FileExtensionValidator(allowed_extensions=['zip', 'rar', 'tar', 'tar.gz', 'tar'])]),
+
     }
 
     for field in energy_meters_fields:

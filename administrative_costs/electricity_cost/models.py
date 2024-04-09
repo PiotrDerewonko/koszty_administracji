@@ -93,20 +93,19 @@ class Year(models.Model):
 
 class MeterReading(models.Model):
     energy_meter = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT, verbose_name='Licznik')
-    date_of_reading = models.DateField(verbose_name='Data odczytu')
     meter_reading = models.FloatField(verbose_name='Odczyt licznika')
     reading_name = models.ForeignKey('MeterReadingsList', on_delete=models.PROTECT, verbose_name='Nazwa odczytu')
 
     def __str__(self):
-        return f'''Odczyt licznika {self.energy_meter} z dnia {self.date_of_reading}'''
+        return f'''Odczyt licznika {self.energy_meter} z odczytu {self.reading_name}'''
 
 
 class CounterUsage(models.Model):
-    '''Model ktory reprezentuje jaki bylo zuzcyie danego licznika  w danym miesiacu i roku rozliczeniowym.
+    """Model ktory reprezentuje jaki bylo zuzcyie danego licznika  w danym miesiacu i roku rozliczeniowym.
     Celem modelu jest odziolowanie odczytow licznika od zuzycia, zwlaszcz przy edycji danych.
     Poczas edycji danych bedzie uruchamiany osobny skrypt ktory saksuje z tego modelu zuzycie dla edytowanego miesiaca i
     roku oraz kolejnego, a nastwpnie doda dane na nowo. Przy dodwaniu nowoych danych wspomnialy sktrp
-    nie bedzie uruchamiany'''
+    nie bedzie uruchamiany"""
     energy_meter = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT, verbose_name='Licznik')
     usage = models.FloatField(verbose_name='Zużycie licznika')
     biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
@@ -128,14 +127,18 @@ class EnergyMeterTree(models.Model):
 
 
 class MeterReadingsList(models.Model):
-    '''Model w ktorym okreslamy, nazwe robocza odczytu oraz miesiac i rok obrachunnkowy. Model ma dwa zadania:
+    """Model w ktorym okreslamy, nazwe robocza odczytu oraz miesiac i rok obrachunnkowy. Model ma dwa zadania:
     1) nie dopusici do sytuacji, gdzie ktos doda np recznie dwa razy te same dane, np liczniki spisywane recznie
-    2) latwe wyszukiwanie w tabeli z odczytami, odczytow dotyczacych danego roku i miesiaca'''
-    meter_reading_name = models.CharField(max_length=100, verbose_name='Nazwa odczytu')
+    2) latwe wyszukiwanie w tabeli z odczytami, odczytow dotyczacych danego roku i miesiaca"""
     biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
     biling_year = models.ForeignKey('Year', verbose_name='Rok rozliczeniowy', on_delete=models.PROTECT)
+    date_of_read = models.DateField(verbose_name='Data odczytu', auto_now=False, auto_now_add=False)
+    photo = models.FileField(verbose_name='Zdjecie licznika', upload_to='files/%Y/%m/%d')
+    add_manualy = models.BooleanField(default=False)
+    add_automatic = models.BooleanField(default=False)
+
     def __str__(self):
-        return f'Odczyt o nazwie: {self.meter_reading_name} za rok: {self.biling_year} oraz miesiac {self.biling_month}'
+        return f'Odczyt za rok: {self.biling_year} oraz miesiac {self.biling_month}'
 
     class Meta:
         unique_together = ['biling_month', 'biling_year']

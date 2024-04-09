@@ -47,7 +47,7 @@ class EnergyMeterTreeAdmin(admin.ModelAdmin):
     list_display = ['id', 'energy_meter_main', 'energy_meter_submain']
 
 class MeterReadingListAdmin(admin.ModelAdmin):
-    list_display = ['id', 'meter_reading_name', 'biling_month', 'biling_year']
+    list_display = ['id', 'biling_month', 'biling_year', 'add_manualy', 'add_automatic']
 
 
 admin.site.register(Invoices, InvoicesAdmin)
