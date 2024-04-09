@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .forms import get_energy_meter_form
 from django.shortcuts import render, redirect
-from .add_manualy_readings.add_meter_reading import add_meter_reading
+from .add_readings.add_manualy_readings.add_meter_reading import add_meter_reading
 
 
 @method_decorator(login_required, name='dispatch')

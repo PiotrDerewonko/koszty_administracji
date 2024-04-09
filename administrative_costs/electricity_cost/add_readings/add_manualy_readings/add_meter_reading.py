@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.db import IntegrityError
 from django.db.utils import Error
 
-from ..models import MeterReadingsList, Month, Year
+from ...models import MeterReadingsList
 
 
 def add_meter_reading(month, year, date_of_read, photo, error_message) -> str:
