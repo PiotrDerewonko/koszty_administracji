@@ -140,5 +140,8 @@ class MeterReadingsList(models.Model):
     def __str__(self):
         return f'Odczyt za rok: {self.biling_year} oraz miesiac {self.biling_month}'
 
+    #todo dodac tutaj ograniczenie aby nie mozna bylo dziur miedzy okresami, czyli nie mozna dodac stycznia i marca
     class Meta:
         unique_together = ['biling_month', 'biling_year']
+
+

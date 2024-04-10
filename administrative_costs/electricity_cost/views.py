@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from .forms import get_energy_meter_form
 from django.shortcuts import render, redirect
 from .add_readings.add_manualy_readings.add_meter_reading import add_meter_reading
+from .add_readings.find_previous_period import find_previous_period, find_period_data, compare_data
 
 
 @method_decorator(login_required, name='dispatch')
@@ -32,9 +33,9 @@ class InvoicesListView(ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
-        '''
+        """
         pobiera parametr sort
-        '''
+        """
         context = super().get_context_data(**kwargs)
         sort_param = self.request.GET.get('sort', 'cost')
         context['sort'] = sort_param
@@ -58,8 +59,11 @@ def add_meter_readings_maunaly(request):
             date_of_read = request.POST.get('date_of_read')
             photo = request.FILES.get('photo')
             error_message = add_meter_reading(month, year, date_of_read, photo, error_message)
-            return render(request, 'electricity_cost/add_meter_readings_manualy.html',
-                          {'form': form, 'error_message': error_message})
+            if error_message == 'manual_exist':
+                previous_data = find_period_data(int(year), int(month))
+                compared_data = compare_data(request, previous_data)
+                return render(request, 'electricity_cost/add_meter_readings_manualy.html',
+                              {'form': form, 'error_message': error_message, 'data_diffrent': compared_data})
 
 
 

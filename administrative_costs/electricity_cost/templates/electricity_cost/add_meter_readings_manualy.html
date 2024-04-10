@@ -6,6 +6,7 @@
 {% block content %}
     {% if error_message %}
         <p>{{ error_message }}</p>
+        {{ data_diffrent|safe }}
         <p>Błąd: Duplikat klucza unikatowego. Czy chcesz nadpisać dane?</p>
         <form method="POST">
             {% csrf_token %}

@@ -5,6 +5,7 @@ from django.db.utils import Error
 from ...models import MeterReadingsList
 
 
+
 def add_meter_reading(month, year, date_of_read, photo, error_message) -> str:
     """Funkcja ktorej zadnaiem jest utworzenie nowej instancji modelu MeterReadingsList, a w wypadku gdy
     taka instancja juz istnieje sprawdzenie czy byly dodwane wartosci recznie a jesli tak to zwrocenie komunikatu bledu
@@ -17,6 +18,7 @@ def add_meter_reading(month, year, date_of_read, photo, error_message) -> str:
             instance_month_year_add_manualy = MeterReadingsList.objects.get(biling_month=month, biling_year=year,
                                                                             add_manualy=True)
             error_message = 'manual_exist'
+
         except:
             instance_month_year.add_manualy = True
             instance_month_year.save()
