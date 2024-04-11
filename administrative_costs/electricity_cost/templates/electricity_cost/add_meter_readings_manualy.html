@@ -5,17 +5,19 @@
 
 {% block content %}
     {% if error_message %}
-        <p>{{ error_message }}</p>
-        {{ data_diffrent|safe }}
-        <p>Błąd: Duplikat klucza unikatowego. Czy chcesz nadpisać dane?</p>
+        <div class="table-container">
+            {{ data_diffrent|safe }}
+        </div>
+        <p>{{ komunikat }}</p>
         <form method="POST">
             {% csrf_token %}
             <!-- Ukryte pole, aby oznaczyć, że użytkownik wybrał nadpisanie danych -->
-            <input type="hidden" name="overwrite" value="true">
+            <input type="hidden" name=error_message value="true">
             <!-- Przyciski potwierdzenia i anulowania -->
             <input type="submit" value="Zatwierdź">
             <button onclick="window.history.back(); return false;">Anuluj</button>
         </form>
+
     {% else %}
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}

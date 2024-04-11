@@ -6,7 +6,8 @@ from django.utils.decorators import method_decorator
 from .forms import get_energy_meter_form
 from django.shortcuts import render, redirect
 from .add_readings.add_manualy_readings.add_meter_reading import add_meter_reading
-from .add_readings.find_previous_period import find_previous_period, find_period_data, compare_data
+from .add_readings.find_previous_period import find_previous_period, find_period_data
+from .add_readings.modificate_data import find_wrond_energy_meters_reading, compare_data, save_data
 
 
 @method_decorator(login_required, name='dispatch')
@@ -58,12 +59,27 @@ def add_meter_readings_maunaly(request):
             year = request.POST.get('year')
             date_of_read = request.POST.get('date_of_read')
             photo = request.FILES.get('photo')
-            error_message = add_meter_reading(month, year, date_of_read, photo, error_message)
+            error_message, pk_mrl = add_meter_reading(month, year, date_of_read, photo, error_message)
             if error_message == 'manual_exist':
                 previous_data = find_period_data(int(year), int(month))
-                compared_data = compare_data(request, previous_data)
+                compared_data = compare_data(request, previous_data, 'dane teraz wpisane',
+                                             'dane w bazie danych')
+                # todo dodac zapis jesli kiknal zapisz i przekierowac do widoku z wszystkimi wpisami
                 return render(request, 'electricity_cost/add_meter_readings_manualy.html',
-                              {'form': form, 'error_message': error_message, 'data_diffrent': compared_data})
+                              {'form': form, 'error_message': error_message,
+                               'data_diffrent': compared_data.to_html(index=False),
+                               'komunikat': '''Dane za ten okres rozliczeniowy były już dodawane, Jeśli mimo to chcesz nadpisać dane wybierz zapisz.
+            Jeśli chcesz cofnąć się to wypełnionego formularza wybierz anuluj.'''})
+            else:
+                data_diffrent, error_message = find_wrond_energy_meters_reading(request, year, month)
+                if error_message == 'wrong_insert_data':
+                    return render(request, 'electricity_cost/add_meter_readings_manualy.html',
+                                  {'form': form, 'error_message': error_message,
+                                   'data_diffrent': data_diffrent.to_html(index=False),
+                                   'komunikat': 'Dane sa podejrzane'})
+                else:
+                    save_data(request, pk_mrl)
+
 
 
 

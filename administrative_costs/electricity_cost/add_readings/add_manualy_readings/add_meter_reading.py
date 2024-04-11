@@ -5,8 +5,7 @@ from django.db.utils import Error
 from ...models import MeterReadingsList
 
 
-
-def add_meter_reading(month, year, date_of_read, photo, error_message) -> str:
+def add_meter_reading(month, year, date_of_read, photo, error_message) -> [str, int]:
     """Funkcja ktorej zadnaiem jest utworzenie nowej instancji modelu MeterReadingsList, a w wypadku gdy
     taka instancja juz istnieje sprawdzenie czy byly dodwane wartosci recznie a jesli tak to zwrocenie komunikatu bledu
     aby dac uzytkownikowi wybor czy chce dane nadpisac czy nie"""
@@ -26,4 +25,7 @@ def add_meter_reading(month, year, date_of_read, photo, error_message) -> str:
     except MeterReadingsList.DoesNotExist:
         meter_reading_list_instance = MeterReadingsList.objects.create(**dict_to_save)
 
-    return error_message
+    final_instance = MeterReadingsList.objects.get(biling_month=month, biling_year=year)
+    final_instance_pk = final_instance.pk
+
+    return error_message, final_instance_pk
