@@ -3,6 +3,7 @@ from ..models import EnergyMeters, MeterReading
 from .find_previous_period import find_previous_period, find_period_data
 import json
 
+
 def change_form_to_df(data) -> pd.DataFrame:
     """funkcja zamienia przekazane dane z formularza (z request) na dataframe"""
     tmp_dict = {'name': [], 'values': []}
@@ -101,4 +102,3 @@ def save_data(data, key) -> None:
             energy_meter_id=item['energy_meter_id'],
             reading_name_id=item['reading_name_id']
         )
-    a= 5

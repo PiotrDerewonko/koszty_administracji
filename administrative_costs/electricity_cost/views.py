@@ -1,5 +1,5 @@
 from django.views.generic import ListView
-from .models import Invoices, EnergyMeters
+from .models import Invoices, EnergyMeters, MeterReading, Year, Month, MeterReadingsList
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from .add_readings.add_manualy_readings.add_meter_reading import add_meter_reading
 from .add_readings.find_previous_period import find_previous_period, find_period_data
 from .add_readings.modificate_data import find_wrond_energy_meters_reading, compare_data, save_data
-
+from django.urls import reverse_lazy
 
 @method_decorator(login_required, name='dispatch')
 class InvoicesListView(ListView):
@@ -79,12 +79,17 @@ def add_meter_readings_maunaly(request):
                                    'komunikat': 'Dane sa podejrzane'})
                 else:
                     save_data(request, pk_mrl)
-
-
-
-
+                    return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
 
     else:
         form = energymeterform()
 
     return render(request, 'electricity_cost/add_meter_readings_manualy.html', {'form': form})
+
+@method_decorator(login_required, name='dispatch')
+class EnergyReadingsView(ListView):
+    model = MeterReadingsList
+    paginate_by = 20
+    # ordering = ['-id']
+    template_name = 'electricity_cost/readings_list_view.html'
+
