@@ -10,6 +10,7 @@ from .add_readings.find_previous_period import find_previous_period, find_period
 from .add_readings.modificate_data import find_wrond_energy_meters_reading, compare_data, save_data
 from django.urls import reverse_lazy
 
+
 @method_decorator(login_required, name='dispatch')
 class InvoicesListView(ListView):
     # todo dorobic filtrowanie faktur
@@ -44,7 +45,7 @@ class InvoicesListView(ListView):
 
 
 @login_required
-def add_meter_readings_maunaly(request):
+def add_meter_readings_maunaly(request, pk=None):
     """
     widok dodawania recznego listy faktur. Do formualrza trafia aktualna lista licznikow z modelu, poczym jest
     generoweany formularz ktory zawiera wszystkie aktualne liczniki.
@@ -52,7 +53,7 @@ def add_meter_readings_maunaly(request):
     energy_meter_fields = EnergyMeters.objects.all()
     energymeterform = get_energy_meter_form(energy_meter_fields)
     error_message = None
-    if request.method == 'POST':
+    if request.method == 'POST' and pk is None:
         form = energymeterform(request.POST)
         if form.is_valid():
             month = request.POST.get('month')
@@ -80,11 +81,15 @@ def add_meter_readings_maunaly(request):
                 else:
                     save_data(request, pk_mrl)
                     return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
-
+    elif pk is not None:
+        data_static = [5, 5, '2025-05-01', 'abc.tar']
+        energymeterform = get_energy_meter_form(energy_meter_fields, data_static=data_static)
+        form = energymeterform()
     else:
         form = energymeterform()
 
     return render(request, 'electricity_cost/add_meter_readings_manualy.html', {'form': form})
+
 
 @method_decorator(login_required, name='dispatch')
 class EnergyReadingsView(ListView):
@@ -92,4 +97,3 @@ class EnergyReadingsView(ListView):
     paginate_by = 20
     # ordering = ['-id']
     template_name = 'electricity_cost/readings_list_view.html'
-

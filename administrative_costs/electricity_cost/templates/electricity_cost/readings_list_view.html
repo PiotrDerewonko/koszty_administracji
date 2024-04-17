@@ -4,50 +4,76 @@
 
 
 {% block content %}
-    <div class="table-container">
-        <table class="my-table">
-{#            <thead>#}
-{#            <tr>#}
-{#                <th>#}
-{#                    <a href="?{% if sort == 'id' %}sort=-id{% else %}sort=id{% endif %}">Identyfikator</a></th>#}
-{#                <th>#}
-{#                    <a href="?{% if sort == 'invoices_number' %}sort=-invoices_number#}
+<div class="table-container">
+    <table class="my-table">
+        {#
+        <thead>#}
+        {#
+        <tr>#}
+            {#
+            <th>#}
+                {# <a href="?{% if sort == 'id' %}sort=-id{% else %}sort=id{% endif %}">Identyfikator</a></th>
+            #}
+            {#
+            <th>#}
+                {# <a href="?{% if sort == 'invoices_number' %}sort=-invoices_number#}
 {#                        {% else %}{% if sort == '-invoices_number' %}sort=-id{% else %}sort=invoices_number{% endif %}{% endif %}">Numer#}
-{#                        faktury</a></th>#}
-{#                <th><a href="?{% if sort == 'cost' %}sort=-cost#}
-{#                    {% else %}{% if sort == '-cost' %}sort=-id{% else %}sort=cost{% endif %}{% endif %}">Koszt</a></th>#}
-{#                <th><a href="?{% if sort == 'numbers_mwh' %}sort=-numbers_mwh#}
+                    {# faktury</a></th>
+            #}
+            {#
+            <th><a href="?{% if sort == 'cost' %}sort=-cost#}
+{#                    {% else %}{% if sort == '-cost' %}sort=-id{% else %}sort=cost{% endif %}{% endif %}">Koszt</a>
+            </th>
+            #}
+            {#
+            <th><a href="?{% if sort == 'numbers_mwh' %}sort=-numbers_mwh#}
 {#                    {% else %}{% if sort == '-numbers_mwh' %}sort=-id{% else %}sort=numbers_mwh{% endif %}{% endif %}">Ilość#}
-{#                    MwH</a></th>#}
-{#                <th><a href="?{% if sort == 'energysuppliers' %}sort=-energysuppliers#}
+                {# MwH</a></th>
+            #}
+            {#
+            <th><a href="?{% if sort == 'energysuppliers' %}sort=-energysuppliers#}
 {#                    {% else %}{% if sort == '-energysuppliers' %}sort=-id{% else %}sort=energysuppliers{% endif %}{% endif %}">Dostawca</a>#}
-{#                </th>#}
-{#                <th>#}
-{#                    <a href="?{% if sort == 'biling_month__number_of_month' %}sort=-biling_month__number_of_month#}
+                {#
+            </th>
+            #}
+            {#
+            <th>#}
+                {# <a href="?{% if sort == 'biling_month__number_of_month' %}sort=-biling_month__number_of_month#}
 {#                        {% else %}{% if sort == '-biling_month__number_of_month' %}sort=-id{% else %}sort=biling_month__number_of_month{% endif %}{% endif %}">Miesiąc#}
-{#                        Rozrachunkowy</a>#}
-{#                </th>#}
-{#                <th><a href="?{% if sort == 'biling_year' %}sort=-biling_year#}
+                    {# Rozrachunkowy</a>#}
+                {#
+            </th>
+            #}
+            {#
+            <th><a href="?{% if sort == 'biling_year' %}sort=-biling_year#}
 {#                    {% else %}{% if sort == '-biling_year' %}sort=-id{% else %}sort=biling_year{% endif %}{% endif %}">Rok#}
-{#                    Rozrachunkowy</a>#}
-{#                </th>#}
-{#            </tr>#}
-{#            </thead>#}
-            <tbody>
-            {% for obj in object_list %}
-                <tr>
-                    <td>{{ obj.id }}</td>
-                    <td>{{ obj.biling_year }}</td>
-                    <td>{{ obj.biling_month }}</td>
-                    <td>{{ obj.date_of_read }}</td>
+                {# Rozrachunkowy</a>#}
+                {#
+            </th>
+            #}
+            {#
+        </tr>
+        #}
+        {#
+        </thead>
+        #}
+        <tbody>
+        {% for obj in object_list %}
+        <tr>
+            <td>{{ obj.id }}</td>
+            <td>{{ obj.biling_year }}</td>
+            <td>{{ obj.biling_month }}</td>
+            <td>{{ obj.date_of_read }}</td>
+            <td>{{ obj.add_automatic }}</td>
+            <td>{{ obj.add_manualy }}</td>
 
-                    <!-- Dodaj inne pola według potrzeb -->
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="pagination">
+            <!-- Dodaj inne pola według potrzeb -->
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
             <a href="?page=1">&laquo; first</a>
@@ -62,7 +88,7 @@
             <a href="?page={{ page_obj.paginator.num_pages }}">Ostatnia &raquo;</a>
         {% endif %}
     </span>
-    </div>
+</div>
 
 
 {% endblock %}
