@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from .add_readings.add_manualy_readings.add_meter_reading import add_meter_reading
 from .add_readings.find_previous_period import find_previous_period, find_period_data
 from .add_readings.modificate_data import find_wrond_energy_meters_reading, compare_data, save_data
+from .add_readings.download_data import download_data_to_edit_manual_meter_readings
 from django.urls import reverse_lazy
 
 
@@ -65,7 +66,6 @@ def add_meter_readings_maunaly(request, pk=None):
                 previous_data = find_period_data(int(year), int(month))
                 compared_data = compare_data(request, previous_data, 'dane teraz wpisane',
                                              'dane w bazie danych')
-                # todo dodac zapis jesli kiknal zapisz i przekierowac do widoku z wszystkimi wpisami
                 return render(request, 'electricity_cost/add_meter_readings_manualy.html',
                               {'form': form, 'error_message': error_message,
                                'data_diffrent': compared_data.to_html(index=False),
@@ -81,9 +81,9 @@ def add_meter_readings_maunaly(request, pk=None):
                 else:
                     save_data(request, pk_mrl)
                     return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
-    elif pk is not None:
-        data_static = [5, 5, '2025-05-01', 'abc.tar']
-        energymeterform = get_energy_meter_form(energy_meter_fields, data_static=data_static)
+    elif request.method != 'POST' and pk is not None:
+        data_static, data_dynamic = download_data_to_edit_manual_meter_readings(pk)
+        energymeterform = get_energy_meter_form(energy_meter_fields, data_static=data_static, data_dynamic=data_dynamic)
         form = energymeterform()
     else:
         form = energymeterform()
@@ -94,6 +94,6 @@ def add_meter_readings_maunaly(request, pk=None):
 @method_decorator(login_required, name='dispatch')
 class EnergyReadingsView(ListView):
     model = MeterReadingsList
-    paginate_by = 20
+    paginate_by = 10
     # ordering = ['-id']
     template_name = 'electricity_cost/readings_list_view.html'

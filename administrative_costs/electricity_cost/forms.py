@@ -22,10 +22,14 @@ def get_energy_meter_form(energy_meters_fields, data_static=None, data_dynamic=N
                                  initial=data_static[3] if data_static else None),
 
     }
-
-    for field in energy_meters_fields:
-        field_name = field.name
-        #todo tu brac ze slownika
-        fields[field_name] = forms.FloatField(required=True)
+    if data_dynamic == None:
+        for field in energy_meters_fields:
+            field_name = field.name
+            #todo tu brac ze slownika
+            fields[field_name] = forms.FloatField(required=True)
+    else:
+        for field in data_dynamic:
+            field_name = field.energy_meter.name
+            fields[field_name] = forms.FloatField(required=True, initial=field.meter_reading)
 
     return type('EnergyMeterForm', (forms.Form,), fields)

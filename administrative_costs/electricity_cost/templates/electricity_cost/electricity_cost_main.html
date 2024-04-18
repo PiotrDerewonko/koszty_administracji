@@ -3,8 +3,13 @@
 {% block sidebar %}
     <nav>
         <ul>
-            <li><a {% if active_tab == 'post_list' %} class='active' {% endif %}
-                                                      href="{% url 'electricity_cost:lista_faktur' %}">Lista faktur</a>
+            <li><a {% if active_tab == 'invoices_list' %} class='active' {% endif %}
+                                                          href="{% url 'electricity_cost:lista_faktur' %}">Lista
+                faktur</a>
+            </li>
+            <li><a {% if active_tab == 'readings_list' %} class='active' {% endif %}
+                                                          href="{% url 'electricity_cost:lista_odczytów' %}">Lista
+                odczytów</a>
             </li>
 
 

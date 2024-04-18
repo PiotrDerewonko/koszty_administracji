@@ -81,3 +81,14 @@ th {
     width: 45%; /* Dostosuj szerokość według własnych potrzeb */
     margin-right: 5px; /* Odstęp między polami */
 }
+
+.container {
+    text-align: right;
+    float: right;
+}
+
+.button {
+    display: block;
+    margin-bottom: 10px; /* Odstęp między guzikami */
+
+}

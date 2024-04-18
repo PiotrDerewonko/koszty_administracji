@@ -4,76 +4,44 @@
 
 
 {% block content %}
-<div class="table-container">
-    <table class="my-table">
-        {#
-        <thead>#}
-        {#
-        <tr>#}
-            {#
-            <th>#}
-                {# <a href="?{% if sort == 'id' %}sort=-id{% else %}sort=id{% endif %}">Identyfikator</a></th>
-            #}
-            {#
-            <th>#}
-                {# <a href="?{% if sort == 'invoices_number' %}sort=-invoices_number#}
-{#                        {% else %}{% if sort == '-invoices_number' %}sort=-id{% else %}sort=invoices_number{% endif %}{% endif %}">Numer#}
-                    {# faktury</a></th>
-            #}
-            {#
-            <th><a href="?{% if sort == 'cost' %}sort=-cost#}
-{#                    {% else %}{% if sort == '-cost' %}sort=-id{% else %}sort=cost{% endif %}{% endif %}">Koszt</a>
-            </th>
-            #}
-            {#
-            <th><a href="?{% if sort == 'numbers_mwh' %}sort=-numbers_mwh#}
-{#                    {% else %}{% if sort == '-numbers_mwh' %}sort=-id{% else %}sort=numbers_mwh{% endif %}{% endif %}">Ilość#}
-                {# MwH</a></th>
-            #}
-            {#
-            <th><a href="?{% if sort == 'energysuppliers' %}sort=-energysuppliers#}
-{#                    {% else %}{% if sort == '-energysuppliers' %}sort=-id{% else %}sort=energysuppliers{% endif %}{% endif %}">Dostawca</a>#}
-                {#
-            </th>
-            #}
-            {#
-            <th>#}
-                {# <a href="?{% if sort == 'biling_month__number_of_month' %}sort=-biling_month__number_of_month#}
-{#                        {% else %}{% if sort == '-biling_month__number_of_month' %}sort=-id{% else %}sort=biling_month__number_of_month{% endif %}{% endif %}">Miesiąc#}
-                    {# Rozrachunkowy</a>#}
-                {#
-            </th>
-            #}
-            {#
-            <th><a href="?{% if sort == 'biling_year' %}sort=-biling_year#}
-{#                    {% else %}{% if sort == '-biling_year' %}sort=-id{% else %}sort=biling_year{% endif %}{% endif %}">Rok#}
-                {# Rozrachunkowy</a>#}
-                {#
-            </th>
-            #}
-            {#
-        </tr>
-        #}
-        {#
-        </thead>
-        #}
-        <tbody>
-        {% for obj in object_list %}
-        <tr>
-            <td>{{ obj.id }}</td>
-            <td>{{ obj.biling_year }}</td>
-            <td>{{ obj.biling_month }}</td>
-            <td>{{ obj.date_of_read }}</td>
-            <td>{{ obj.add_automatic }}</td>
-            <td>{{ obj.add_manualy }}</td>
+    <div class="container">
+        <button class="button" onclick="window.location.href = '{% url 'electricity_cost:dodawanie_reczne_licznikow' %}'">Dodaj nowy
+            odczyt z danych ręcznych
+        </button>
+        <button class="button">Dodaj nowy odczyt z danych automatycznych</button>
+    </div>
+    <div class="table-container">
+        <table class="my-table">
+            <thead>
+            <tr>
+                <th>Identyfikator</th>
+                <th>Rok Rozliczeniowy</th>
+                <th>Miesiąc Rozliczeniowy</th>
+                <th>Data odczytu</th>
+                <th>Dodany odczyt automatyczny</th>
+                <th>Dodany odczyt ręczny</th>
+                <th>Akcje</th>
+            </tr>
+            </thead>
 
-            <!-- Dodaj inne pola według potrzeb -->
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
-<div class="pagination">
+            <tbody>
+            {% for obj in object_list %}
+                <tr>
+                    <td><a href="{% url 'electricity_cost:edycja_reczna_licznikow' pk=obj.id %}">{{ obj.id }}</a></td>
+                    <td>{{ obj.biling_year }}</td>
+                    <td>{{ obj.biling_month }}</td>
+                    <td>{{ obj.date_of_read }}</td>
+                    <td>{{ obj.add_automatic }}</td>
+                    <td>{{ obj.add_manualy }}</td>
+                    <td><a href="{% url 'electricity_cost:edycja_reczna_licznikow' pk=obj.id %}">Edycja</a></td>
+
+                    <!-- Dodaj inne pola według potrzeb -->
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
             <a href="?page=1">&laquo; first</a>
@@ -88,7 +56,6 @@
             <a href="?page={{ page_obj.paginator.num_pages }}">Ostatnia &raquo;</a>
         {% endif %}
     </span>
-</div>
-
+    </div>
 
 {% endblock %}
