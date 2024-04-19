@@ -1,6 +1,6 @@
 from django.urls import path
 from .models import Invoices
-from .views import InvoicesListView, add_meter_readings_maunaly, EnergyReadingsView
+from .views.views import InvoicesListView, add_meter_readings_maunaly, EnergyReadingsView
 
 app_name = 'electricity_cost'
 

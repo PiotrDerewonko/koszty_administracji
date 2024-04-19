@@ -1,5 +1,5 @@
 from django.test import TestCase
-from . import EnergyMeters, MeterShares, MeterLocations, Month, Year, Invoices, EnergySuppliers
+from ..models import EnergyMeters, MeterShares, MeterLocations, Month, Year, Invoices, EnergySuppliers
 from django.core.exceptions import ValidationError
 
 
