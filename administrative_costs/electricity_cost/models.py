@@ -49,6 +49,7 @@ class EnergyMeters(models.Model):
                                      verbose_name='Udział Parafii')
     institute_share = models.ForeignKey('MeterShares', on_delete=models.PROTECT, related_name='institute_share',
                                         default=6, verbose_name='Udział Instytutu')
+    is_add_manual = models.BooleanField(default=False, verbose_name='Licznik dodawany ręcznie')
 
     def clean(self):
 

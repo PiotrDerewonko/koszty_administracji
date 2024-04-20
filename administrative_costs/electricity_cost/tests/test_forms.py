@@ -1,7 +1,7 @@
 from django.test import TestCase
 from electricity_cost.forms import *
 from electricity_cost.models import *
-
+from ..add_readings.add_manualy_readings.add_meter_reading import add_meter_reading
 
 class FormTests(TestCase):
     @classmethod
@@ -38,3 +38,16 @@ class FormTests(TestCase):
         form_instance = form_class(data={'Electricity Meter': 1, 'year': 111, 'month': 11, 'date_of_read': '202-01-01'})
         a = form_instance.is_valid()
         self.assertFalse(form_instance.is_valid())  #
+
+    def test_save_meter_reading_list_correct(self):
+        error_message, pk = add_meter_reading(1, 1, '2023-01-01', None, None)
+        self.assertEqual(error_message, None)
+
+    def test_save_meter_reading_list_manual_exist(self):
+        error_message_1, pk_1 = add_meter_reading(1, 1, '2023-01-01', None, None)
+        error_message_2, pk_2 = add_meter_reading(1, 1, '2023-01-01', None, None)
+        self.assertEqual(error_message_2, 'manual_exist')
+
+
+
+

@@ -51,7 +51,7 @@ def add_meter_readings_maunaly(request, pk=None):
     widok dodawania recznego listy faktur. Do formualrza trafia aktualna lista licznikow z modelu, poczym jest
     generoweany formularz ktory zawiera wszystkie aktualne liczniki.
     """
-    energy_meter_fields = EnergyMeters.objects.all()
+    energy_meter_fields = EnergyMeters.objects.filter(is_add_manual=True)
     energymeterform = get_energy_meter_form(energy_meter_fields)
     error_message = None
     if request.method == 'POST' and pk is None:

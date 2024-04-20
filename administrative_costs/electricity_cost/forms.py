@@ -1,7 +1,7 @@
 # forms.py
 
 from django import forms
-from .models import EnergyMeters, Month, Year
+from .models import Month, Year
 from django.core.validators import FileExtensionValidator
 
 
@@ -33,3 +33,6 @@ def get_energy_meter_form(energy_meters_fields, data_static=None, data_dynamic=N
 
     EnergyMeterFormClass = type('EnergyMeterForm', (forms.Form,), fields)
     return EnergyMeterFormClass
+
+def form_for_automatic_energy_meters():
+    pass
