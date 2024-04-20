@@ -18,8 +18,8 @@
                 <th>Rok Rozliczeniowy</th>
                 <th>Miesiąc Rozliczeniowy</th>
                 <th>Data odczytu</th>
-                <th>Dodany odczyt automatyczny</th>
-                <th>Dodany odczyt ręczny</th>
+                <th>Dodany<br>odczyt automatyczny</th>
+                <th>Dodany<br>odczyt ręczny</th>
                 <th>Akcje</th>
             </tr>
             </thead>
@@ -30,10 +30,11 @@
                     <td><a href="{% url 'electricity_cost:edycja_reczna_licznikow' pk=obj.id %}">{{ obj.id }}</a></td>
                     <td>{{ obj.biling_year }}</td>
                     <td>{{ obj.biling_month }}</td>
-                    <td>{{ obj.date_of_read }}</td>
+                    <td>{{ obj.date_of_read|date:"Y-m-d" }}</td>
                     <td>{{ obj.add_automatic }}</td>
                     <td>{{ obj.add_manualy }}</td>
-                    <td><a href="{% url 'electricity_cost:edycja_reczna_licznikow' pk=obj.id %}">Edycja</a></td>
+                    <td><a href="{% url 'electricity_cost:edycja_reczna_licznikow' pk=obj.id %}">Edycja danych ręcznych</a><br>
+                        <a href="{% url 'electricity_cost:edycja_reczna_licznikow' pk=obj.id %}">Edycja danych automatycznych</a></td>
 
                     <!-- Dodaj inne pola według potrzeb -->
                 </tr>

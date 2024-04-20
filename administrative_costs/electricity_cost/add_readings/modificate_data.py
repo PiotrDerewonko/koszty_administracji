@@ -1,12 +1,14 @@
 import pandas as pd
-from ..models import EnergyMeters, MeterReading
+from ..models import EnergyMeters, MeterReading, MeterReadingsList
 from .find_previous_period import find_previous_period, find_period_data
 import json
+from django.utils.datastructures import MultiValueDictKeyError
 
 
 def change_form_to_df(data) -> pd.DataFrame:
     """funkcja zamienia przekazane dane z formularza (z request) na dataframe"""
     tmp_dict = {'name': [], 'values': []}
+
     for i, j in data.POST.items():
         tmp_dict['name'].append(i)
         tmp_dict['values'].append(j)
@@ -88,7 +90,9 @@ def compare_data(data_current, data_previous, label_cuurent_data, label_prevoius
     return data_diffrent
 
 
-def save_data(data, key) -> None:
+def save_data_meter_readings(data, key) -> None:
+    """Funkcja zapisuje dane przekazane w formualrzu do taberli z odczytami licznikow. Dane tu zawarte, to
+    wylacznie odczyty licznikow bez dat i okresow rozliczeniowych."""
     data_to_save = filtr_only_energy_meters_from_request(data)
     data_to_save['reading_name_id'] = key
     data_to_save.rename(columns={'values': 'meter_reading', 'id': 'energy_meter_id'}, inplace=True)
@@ -102,3 +106,29 @@ def save_data(data, key) -> None:
             energy_meter_id=item['energy_meter_id'],
             reading_name_id=item['reading_name_id']
         )
+
+
+def delete_data(pk, is_manual) -> None:
+    """Funkcja ta kasuje dane z wybranego odczytu. parametr is_manual okresla czy skasowane maja zostac odczyty licznikow
+    dodawaanych recznie czy tez odczyty dodawane automatycznie."""
+    try:
+        records_to_delete = MeterReading.objects.filter(reading_name_id=pk, energy_meter_id__in=
+        EnergyMeters.objects.filter(is_add_manual=is_manual))
+        records_to_delete.delete()
+    except MeterReading.DoesNotExist:
+        pass  # nie potrzeba podejmowac dalszych dzialan
+
+
+def change_data_in_meter_reading_list(pk, request) -> None:
+    """Funkcja zmienia wartosc modelu na przekazane dane"""
+    #todo trzeba dorobic opcje sprawdzania czy nie ma juz wybranych takich danych
+    data_to_change = MeterReadingsList.objects.get(id=pk)
+    data_to_change.biling_month_id = int(request.POST['month'])
+    data_to_change.biling_year_id = int(request.POST['year'])
+    data_to_change.date_of_read = request.POST['date_of_read']
+    try:
+        data_to_change.photo = request.FILES['image']
+    except MultiValueDictKeyError:
+        pass  # nie potrzeba nic zmieniac, tzn, ze nie bylo przekazananego nowego zalacznika i stary moze zostac
+
+    data_to_change.save()
