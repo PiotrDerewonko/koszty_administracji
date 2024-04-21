@@ -14,16 +14,21 @@ from django.utils.datastructures import MultiValueDictKeyError
 import json
 
 @login_required
-def add_edit_meter_readings(request, pk=None):
+def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
     """
     widok dodawania recznego listy faktur. Do formualrza trafia aktualna lista licznikow z modelu, poczym jest
     generoweany formularz ktory zawiera wszystkie aktualne liczniki.
     """
-    energy_meter_fields = EnergyMeters.objects.filter(is_add_manual=True)
+    if is_add_manualy.lower() == 'true':
+        manualy = True
+    elif is_add_manualy.lower() == 'false':
+        manualy = False
+    else:
+        manualy = False
+    energy_meter_fields = EnergyMeters.objects.filter(is_add_manual=manualy)
     energymeterform = get_energy_meter_form(energy_meter_fields)
     try:
         error_message = request.POST['error_message']
-        a= 56
     except MultiValueDictKeyError as e:
         error_message = None
     if request.method == 'POST' and pk is None:
@@ -60,11 +65,11 @@ def add_edit_meter_readings(request, pk=None):
                         save_data_meter_readings(request, pk_mrl)
                         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     elif request.method != 'POST' and pk is not None:
-        data_static, data_dynamic = download_data_to_edit_manual_meter_readings(pk)
+        data_static, data_dynamic = download_data_to_edit_manual_meter_readings(pk, manualy)
         energymeterform = get_energy_meter_form(energy_meter_fields, data_static=data_static, data_dynamic=data_dynamic)
         form = energymeterform()
     elif request.method == 'POST' and pk is not None:
-        delete_data(pk, True)
+        delete_data(pk, manualy)
         save_data_meter_readings(request, pk)
         change_data_in_meter_reading_list(pk, request)
         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))

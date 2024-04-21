@@ -7,7 +7,7 @@ app_name = 'electricity_cost'
 
 urlpatterns = [
     path("faktury/", InvoicesListView.as_view(), name='lista_faktur'),
-    path('add/', add_edit_meter_readings, name='dodawanie_reczne_licznikow'),
-    path('add/<int:pk>/', add_edit_meter_readings, name='edycja_reczna_licznikow'),
+    path('add/<str:is_add_manualy>/', add_edit_meter_readings, name='dodawanie_reczne_licznikow'),
+    path('add/<int:pk>/<str:is_add_manualy>/', add_edit_meter_readings, name='edycja_odczytow_licznikow'),
     path('odczyty/', EnergyReadingsView.as_view(), name='lista_odczytów')
 ]

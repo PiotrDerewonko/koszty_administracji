@@ -5,7 +5,9 @@
 
 {% block content %}
     <div class="container">
-        <button class="button" onclick="window.location.href = '{% url 'electricity_cost:dodawanie_reczne_licznikow' %}'">Dodaj nowy
+        <button class="button"
+                onclick="window.location.href = '{% url 'electricity_cost:dodawanie_reczne_licznikow' is_add_manualy='true' %}'">
+            Dodaj nowy
             odczyt z danych ręcznych
         </button>
         <button class="button">Dodaj nowy odczyt z danych automatycznych</button>
@@ -27,14 +29,17 @@
             <tbody>
             {% for obj in object_list %}
                 <tr>
-                    <td><a href="{% url 'electricity_cost:edycja_reczna_licznikow' pk=obj.id %}">{{ obj.id }}</a></td>
+                    <td>{{ obj.id }}</td>
                     <td>{{ obj.biling_year }}</td>
                     <td>{{ obj.biling_month }}</td>
                     <td>{{ obj.date_of_read|date:"Y-m-d" }}</td>
                     <td>{{ obj.add_automatic }}</td>
                     <td>{{ obj.add_manualy }}</td>
-                    <td><a href="{% url 'electricity_cost:edycja_reczna_licznikow' pk=obj.id %}">Edycja danych ręcznych</a><br>
-                        <a href="{% url 'electricity_cost:edycja_reczna_licznikow' pk=obj.id %}">Edycja danych automatycznych</a></td>
+                    <td>
+                        <a href="{% url 'electricity_cost:edycja_odczytow_licznikow' pk=obj.id is_add_manualy='true' %}">Edycja
+                            danych ręcznych</a><br>
+                        <a href="{% url 'electricity_cost:edycja_odczytow_licznikow' pk=obj.id is_add_manualy='false' %}">Edycja
+                            danych automatycznych</a></td>
 
                     <!-- Dodaj inne pola według potrzeb -->
                 </tr>
