@@ -5,14 +5,16 @@ from .models import Month, Year
 from django.core.validators import FileExtensionValidator
 
 
-def get_energy_meter_form(energy_meters_fields, data_static=None, data_dynamic=None):
+def get_energy_meter_form(energy_meters_fields, data_static=None, data_dynamic=None, is_disable=None):
     fields = {
         'year': forms.ModelChoiceField(queryset=Year.objects.all(), label='Rok Rozliczeniowy', required=True,
                                        widget=forms.Select(attrs={'class': 'inline-field'}),
-                                       initial=data_static[0] if data_static else None),
+                                       initial=data_static[0] if data_static else None,
+                                       disabled=is_disable if is_disable else False),
         'month': forms.ModelChoiceField(queryset=Month.objects.all(), label='Miesiąc Rozliczeniowy', required=True,
                                         widget=forms.Select(attrs={'class': 'inline-field'}),
-                                        initial=data_static[1] if data_static else None),
+                                        initial=data_static[1] if data_static else None,
+                                        disabled=is_disable if is_disable else False),
         'date_of_read': forms.DateField(label='Data odczytu', required=True,
                                         widget=forms.DateInput(attrs={'type': 'date'}),
                                         initial=data_static[2] if data_static else None),
@@ -33,6 +35,7 @@ def get_energy_meter_form(energy_meters_fields, data_static=None, data_dynamic=N
 
     EnergyMeterFormClass = type('EnergyMeterForm', (forms.Form,), fields)
     return EnergyMeterFormClass
+
 
 def form_for_automatic_energy_meters():
     pass

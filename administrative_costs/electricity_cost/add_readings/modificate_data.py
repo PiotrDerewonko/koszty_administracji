@@ -3,15 +3,20 @@ from ..models import EnergyMeters, MeterReading, MeterReadingsList
 from .find_previous_period import find_previous_period, find_period_data
 import json
 from django.utils.datastructures import MultiValueDictKeyError
+from typing import Dict
 
 
 def change_form_to_df(data) -> pd.DataFrame:
-    """funkcja zamienia przekazane dane z formularza (z request) na dataframe"""
+    """funkcja zamienia przekazane dane z formularza (z request) lub slwonika na dataframe"""
     tmp_dict = {'name': [], 'values': []}
-
-    for i, j in data.POST.items():
-        tmp_dict['name'].append(i)
-        tmp_dict['values'].append(j)
+    if isinstance(data, dict):
+        for key, value in data.items():
+            tmp_dict['name'].append(key)
+            tmp_dict['values'].append(value)
+    else:
+        for i, j in data.POST.items():
+            tmp_dict['name'].append(i)
+            tmp_dict['values'].append(j)
 
     data_current_from_dict = pd.DataFrame(data=tmp_dict)
     return data_current_from_dict
@@ -36,7 +41,7 @@ def filtr_only_energy_meters_from_request(data) -> pd.DataFrame:
     return data_all
 
 
-def find_wrond_energy_meters_reading(data_from_form, year: int, month: int) -> [pd.DataFrame, str]:
+def find_wrond_energy_meters_reading(data_from_form, year: int, month: int) -> [pd.DataFrame, str, pd.DataFrame]:
     """Zadaniem tej funkcji jest porownanie przekazanych danych z poprzednim okresem rozliczeniowym i odfiltrowanie
     danych ktore moga byc bledne np, wartosc odczytu w biezacym miesiacu jest mniejsza niz w poprzednim, lub
     jest duzo wieksza."""
@@ -44,14 +49,15 @@ def find_wrond_energy_meters_reading(data_from_form, year: int, month: int) -> [
     previous_year, previous_month = find_previous_period(int(year), int(month))
     previous_data = find_period_data(previous_year, previous_month)
     if previous_data is not None:
-        compared_data = compare_data(data_from_form, previous_data, 'Dane z bieżącego okresu',
+        compared_data, good_data = compare_data(data_from_form, previous_data, 'Dane z bieżącego okresu',
                                      'Dane z poprzedniego okresu')
         filtered_compared_data = compared_data.loc[(compared_data['różnica'] < 0) | (compared_data['różnica'] > 1000)]
         if len(filtered_compared_data) > 0:
             error_massage = 'wrong_insert_data'
     else:
         filtered_compared_data = None
-    return filtered_compared_data, error_massage
+        good_data = None
+    return filtered_compared_data, error_massage, good_data
 
 
 def compare_data(data_current, data_previous, label_cuurent_data, label_prevoius_data) -> pd.DataFrame:
@@ -87,7 +93,7 @@ def compare_data(data_current, data_previous, label_cuurent_data, label_prevoius
         data_diffrent['różnica'] = data_diffrent[label_cuurent_data] - data_diffrent[label_prevoius_data]
     else:
         data_diffrent = pd.DataFrame()
-    return data_diffrent
+    return data_diffrent, good_data_current
 
 
 def save_data_meter_readings(data, key) -> None:
@@ -119,16 +125,29 @@ def delete_data(pk, is_manual) -> None:
         pass  # nie potrzeba podejmowac dalszych dzialan
 
 
-def change_data_in_meter_reading_list(pk, request) -> None:
+def change_data_in_meter_reading_list(pk, image, data_of_read) -> None:
     """Funkcja zmienia wartosc modelu na przekazane dane"""
-    #todo trzeba dorobic opcje sprawdzania czy nie ma juz wybranych takich danych
     data_to_change = MeterReadingsList.objects.get(id=pk)
-    data_to_change.biling_month_id = int(request.POST['month'])
-    data_to_change.biling_year_id = int(request.POST['year'])
-    data_to_change.date_of_read = request.POST['date_of_read']
-    try:
-        data_to_change.photo = request.FILES['image']
-    except MultiValueDictKeyError:
-        pass  # nie potrzeba nic zmieniac, tzn, ze nie bylo przekazananego nowego zalacznika i stary moze zostac
-
+    data_to_change.date_of_read = data_of_read
+    if image != None:
+        data_to_change.photo = image
     data_to_change.save()
+
+
+def change_data_to_dict(data) -> Dict:
+    dict_to_return = {}
+    data.set_index('name', inplace=True)
+    for i, j in data['values'].items():
+        dict_to_return[i] = j
+    return dict_to_return
+
+def save_data_to_sesion(current_data_df, request, pk_mrl)->None:
+    """Funckja zapisuje w sesji dane potrzebne do ewentualnego zapisu po zatwierdzeniu przez uzytkownika"""
+    dict_with_data_from_form = change_data_to_dict(current_data_df)
+    request.session['original_form_data'] = dict_with_data_from_form
+    request.session['original_form_pk'] = pk_mrl
+    try:
+        request.session['original_form_image'] = request.FILES['image']
+    except KeyError:
+        request.session['original_form_image'] = None
+    request.session['original_form_date'] = request.POST['date_of_read']
