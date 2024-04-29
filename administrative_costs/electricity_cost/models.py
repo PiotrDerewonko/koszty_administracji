@@ -15,6 +15,10 @@ class Invoices(models.Model):
     def __str__(self):
         return self.invoices_number
 
+    class Meta:
+        unique_together = ['biling_month', 'biling_year', 'energysuppliers', 'cost']
+
+
 
 class EnergySuppliers(models.Model):
     name = models.CharField(max_length=250)
