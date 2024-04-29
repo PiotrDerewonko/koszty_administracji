@@ -135,6 +135,7 @@ class MeterReadingsList(models.Model):
     biling_year = models.ForeignKey('Year', verbose_name='Rok rozliczeniowy', on_delete=models.PROTECT)
     date_of_read = models.DateField(verbose_name='Data odczytu', auto_now=False, auto_now_add=False)
     photo = models.FileField(verbose_name='Zdjecie licznika', upload_to='files/%Y/%m/%d')
+    xlsx_file = models.FileField(verbose_name='Dane z odczytu automatycznego', upload_to='files_xlsx/%Y/%m/%d')
     add_manualy = models.BooleanField(default=False)
     add_automatic = models.BooleanField(default=False)
 

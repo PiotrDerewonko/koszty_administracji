@@ -2,7 +2,7 @@ from ..models import EnergyMeters
 from django.contrib.auth.decorators import login_required
 from ..forms import get_energy_meter_form
 from django.shortcuts import render, redirect
-from ..add_readings.add_manualy_readings.add_meter_reading import add_meter_reading
+from ..add_readings.add_meter_reading import add_meter_reading_manualy
 from ..add_readings.find_previous_period import find_period_data
 from ..add_readings.modificate_data import (find_wrond_energy_meters_reading, compare_data, save_data_meter_readings,
                                             delete_data, change_data_in_meter_reading_list, save_data_to_sesion)
@@ -33,16 +33,13 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
     try:
         original_form_data = request.session['original_form_data']
         original_form_pk = request.session['original_form_pk']
-        original_form_image = request.session['original_form_image']
         original_form_date = request.session['original_form_date']
         request.session.pop('original_form_data', None)
         request.session.pop('original_form_pk', None)
-        request.session.pop('original_form_image', None)
         request.session.pop('original_form_date', None)
     except KeyError:
         original_form_data = None
         original_form_pk = None
-        original_form_image = None
         original_form_date = None
     if request.method == 'POST' and pk is None and original_form_pk is None:
         form = energymeterform(request.POST)
@@ -54,8 +51,8 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
                 month = request.POST.get('month')
                 year = request.POST.get('year')
                 date_of_read = request.POST.get('date_of_read')
-                photo = request.FILES.get('photo')
-                error_message, pk_mrl = add_meter_reading(month, year, date_of_read, photo, error_message)
+                photo = request.FILES.get('image')
+                error_message, pk_mrl = add_meter_reading_manualy(month, year, date_of_read, photo, error_message)
                 if error_message == 'manual_exist':
                     previous_data = find_period_data(int(year), int(month))
                     compared_data, current_data_df = compare_data(request, previous_data, 'dane teraz wpisane',
@@ -87,7 +84,7 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
     elif request.method == 'POST' and original_form_pk is not None:
         delete_data(original_form_pk, manualy)
         save_data_meter_readings(original_form_data, original_form_pk)
-        change_data_in_meter_reading_list(original_form_pk, original_form_image, original_form_date)
+        change_data_in_meter_reading_list(original_form_pk, original_form_date)
         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     else:
         form = energymeterform()

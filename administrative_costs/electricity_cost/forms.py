@@ -38,4 +38,17 @@ def get_energy_meter_form(energy_meters_fields, data_static=None, data_dynamic=N
 
 
 def form_for_automatic_energy_meters():
-    pass
+    fields = {
+        'year': forms.ModelChoiceField(queryset=Year.objects.all(), label='Rok Rozliczeniowy', required=True,
+                                       widget=forms.Select(attrs={'class': 'inline-field'})),
+        'month': forms.ModelChoiceField(queryset=Month.objects.all(), label='Miesiąc Rozliczeniowy', required=True,
+                                        widget=forms.Select(attrs={'class': 'inline-field'})),
+        'date_of_read': forms.DateField(label='Data odczytu', required=True,
+                                        widget=forms.DateInput(attrs={'type': 'date'})),
+        'file_with_meter_readings': forms.FileField(label='Dodaj jeden plik z odczytami licznika', required=True
+                                                    , validators=[
+                FileExtensionValidator(allowed_extensions=['xlsx'])]),
+
+    }
+    EnergyMeterFormClass = type('EnergyMeterForm', (forms.Form,), fields)
+    return EnergyMeterFormClass

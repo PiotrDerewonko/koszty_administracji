@@ -163,4 +163,7 @@ misc.xml
 vcs.xml
 koszt_administracji.iml
 administrative_costs/media/
+/media/*
 media/
+/media/
+

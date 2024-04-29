@@ -9,6 +9,7 @@ click==8.1.7
 Django==5.0.2
 django-bootstrap5==23.4
 django-tables2==2.7.0
+et-xmlfile==1.1.0
 gitdb==4.0.11
 GitPython==3.1.42
 idna==3.6
@@ -20,6 +21,7 @@ markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 mdurl==0.1.2
 numpy==1.26.4
+openpyxl==3.1.2
 packaging==23.2
 pandas==2.2.1
 pillow==10.2.0
@@ -47,4 +49,5 @@ tzdata==2024.1
 tzlocal==5.2
 urllib3==2.2.1
 validators==0.22.0
+wheel @ file:///opt/homebrew/Cellar/python%403.12/3.12.2_1/libexec/wheel-0.42.0-py3-none-any.whl#sha256=5f1ca525bef7466225922019d72cb06a9e91cd3ff807ddd4be1acb84655e5107
 zipp==3.17.0

@@ -13,12 +13,15 @@ def change_form_to_df(data) -> pd.DataFrame:
         for key, value in data.items():
             tmp_dict['name'].append(key)
             tmp_dict['values'].append(value)
+        data_current_from_dict = pd.DataFrame(data=tmp_dict)
+    elif isinstance(data, pd.DataFrame):
+        data_current_from_dict = data
     else:
         for i, j in data.POST.items():
             tmp_dict['name'].append(i)
             tmp_dict['values'].append(j)
+        data_current_from_dict = pd.DataFrame(data=tmp_dict)
 
-    data_current_from_dict = pd.DataFrame(data=tmp_dict)
     return data_current_from_dict
 
 
@@ -50,7 +53,7 @@ def find_wrond_energy_meters_reading(data_from_form, year: int, month: int) -> [
     previous_data = find_period_data(previous_year, previous_month)
     if previous_data is not None:
         compared_data, good_data = compare_data(data_from_form, previous_data, 'Dane z bieżącego okresu',
-                                     'Dane z poprzedniego okresu')
+                                                'Dane z poprzedniego okresu')
         filtered_compared_data = compared_data.loc[(compared_data['różnica'] < 0) | (compared_data['różnica'] > 1000)]
         if len(filtered_compared_data) > 0:
             error_massage = 'wrong_insert_data'
@@ -125,12 +128,10 @@ def delete_data(pk, is_manual) -> None:
         pass  # nie potrzeba podejmowac dalszych dzialan
 
 
-def change_data_in_meter_reading_list(pk, image, data_of_read) -> None:
+def change_data_in_meter_reading_list(pk, data_of_read) -> None:
     """Funkcja zmienia wartosc modelu na przekazane dane"""
     data_to_change = MeterReadingsList.objects.get(id=pk)
     data_to_change.date_of_read = data_of_read
-    if image != None:
-        data_to_change.photo = image
     data_to_change.save()
 
 
@@ -141,13 +142,40 @@ def change_data_to_dict(data) -> Dict:
         dict_to_return[i] = j
     return dict_to_return
 
-def save_data_to_sesion(current_data_df, request, pk_mrl)->None:
+
+def save_data_to_sesion(current_data_df, request, pk_mrl) -> None:
     """Funckja zapisuje w sesji dane potrzebne do ewentualnego zapisu po zatwierdzeniu przez uzytkownika"""
     dict_with_data_from_form = change_data_to_dict(current_data_df)
     request.session['original_form_data'] = dict_with_data_from_form
     request.session['original_form_pk'] = pk_mrl
-    try:
-        request.session['original_form_image'] = request.FILES['image']
-    except KeyError:
-        request.session['original_form_image'] = None
     request.session['original_form_date'] = request.POST['date_of_read']
+
+
+def chack_data_from_xlsx(data, pk) -> pd.DataFrame:
+    """Zadaniem funkcji jest porownanie wjescowego pliku xlsx z danymi ktore zostaly zapisane w bnazie danych"""
+    data_in_db = MeterReading.objects.filter(reading_name_id=pk, energy_meter_id__in=EnergyMeters.objects.filter(
+        is_add_manual=False)).values('energy_meter', 'meter_reading')
+    df_from_data_in_db = pd.DataFrame(data_in_db)
+    em_df = modificate_energy_meters_dict()
+    df_from_data_in_db = pd.merge(df_from_data_in_db, em_df, how='left', left_on='energy_meter', right_on='id')
+    check_data = pd.merge(data, df_from_data_in_db, on='name', how='left', suffixes=('_orginalny', '_w_bazie_danych'))
+    check_data.drop(columns=['id', 'is_good'], inplace=True)
+    check_data['meter_reading_orginalny'].fillna(0, inplace=True)
+    check_data['meter_reading_w_bazie_danych'].fillna(0, inplace=True)
+    check_data['diffrent'] = check_data['meter_reading_orginalny'] - check_data['meter_reading_w_bazie_danych']
+    check_data['diffrent'] = check_data['diffrent'].astype(int)
+    diffrent = check_data.loc[(check_data['diffrent'] > 0) | (check_data['diffrent'] < 0)]
+    return diffrent
+
+
+def data_from_xlx(data, pk) -> str:
+    """Funckja ddczytuje dane z xlsx i zapisuje je w bazie danych, a nastepnie sprawdza, czy wszystkie przeslane dane
+    zostaly zaimportowane do bazy danych"""
+    xlsx_data = pd.read_excel(data)
+    good_data_current = xlsx_data[['Unnamed: 1', 'Unnamed: 10']]
+    good_data_current = good_data_current.drop(good_data_current.index[:10])
+    good_data_current.rename(columns={'Unnamed: 1': 'name', 'Unnamed: 10': 'meter_reading'}, inplace=True)
+    delete_data(pk, False)
+    save_data_meter_readings(good_data_current, pk)
+    not_imported = chack_data_from_xlsx(good_data_current, pk)
+    a = 4

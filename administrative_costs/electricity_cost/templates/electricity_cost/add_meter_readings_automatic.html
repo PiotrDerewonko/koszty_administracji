@@ -1,0 +1,46 @@
+{% extends 'electricity_cost/electricity_cost_main.html' %}
+{% load custom_filters %}
+<title>{% block title %}{{ title }}{% endblock %}</title>
+
+
+{% block content %}
+    {% if error_message %}
+        <div class="table-container">
+            {{ data_diffrent|safe }}
+        </div>
+        <p>{{ komunikat }}</p>
+        <form method="POST">
+            {% csrf_token %}
+            <!-- Ukryte pole, aby oznaczyć, że użytkownik wybrał nadpisanie danych -->
+            <input type="hidden" name=error_message value="true">
+            <input type="hidden" name=error_message_2 value={{ request }}>
+            <!-- Przyciski potwierdzenia i anulowania -->
+            <input type="submit" value="Zatwierdź">
+            <button onclick="window.history.back(); return false;">Anuluj</button>
+        </form>
+
+    {% else %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="table-container">
+                <table class="my-table">
+                    <thead>
+                    <tr>
+                        <th>Rok rozliczeniowy</th>
+                        <th>Miesiąc rozliczeniowy</th>
+                        <th>Plik xlsx</th>
+                    </tr>
+                    </thead>
+
+                    </tr>
+                    <tr>
+                        <td>{{ form.year }}</td>
+                        <td>{{ form.month }}</td>
+                        <td>{{ form.file_with_meter_readings }}</td>
+                    </tr>
+                </table>    
+            </div>
+            <button type="submit">Zapisz</button>
+        </form>
+    {% endif %}
+{% endblock %}
