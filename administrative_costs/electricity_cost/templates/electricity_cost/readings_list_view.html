@@ -10,7 +10,11 @@
             Dodaj nowy
             odczyt z danych ręcznych
         </button>
-        <button class="button">Dodaj nowy odczyt z danych automatycznych</button>
+        <button class="button"
+                onclick="window.location.href = '{% url 'electricity_cost:dodawanie_automatyczne_odczytow' %}'">
+            Dodaj nowy odczyt z danych automatycznych
+        </button>
+        
     </div>
     <div class="table-container">
         <table class="my-table">

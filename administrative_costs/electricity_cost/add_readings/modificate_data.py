@@ -128,10 +128,12 @@ def delete_data(pk, is_manual) -> None:
         pass  # nie potrzeba podejmowac dalszych dzialan
 
 
-def change_data_in_meter_reading_list(pk, data_of_read) -> None:
+def change_data_in_meter_reading_list(pk, data_of_read, image) -> None:
     """Funkcja zmienia wartosc modelu na przekazane dane"""
     data_to_change = MeterReadingsList.objects.get(id=pk)
     data_to_change.date_of_read = data_of_read
+    if image:
+        data_to_change.photo = image
     data_to_change.save()
 
 

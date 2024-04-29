@@ -41,10 +41,11 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
         original_form_data = None
         original_form_pk = None
         original_form_date = None
+
     if request.method == 'POST' and pk is None and original_form_pk is None:
         form = energymeterform(request.POST)
+        # to jest przypadek dla post gdzie jest on przesylany pierwszy raz
         if error_message == 'true':
-            print(request.session['original_form'])
             save_data_meter_readings(energymeterform, pk)
         else:
             if form.is_valid():
@@ -52,7 +53,10 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
                 year = request.POST.get('year')
                 date_of_read = request.POST.get('date_of_read')
                 photo = request.FILES.get('image')
-                error_message, pk_mrl = add_meter_reading_manualy(month, year, date_of_read, photo, error_message)
+                if pk is not None:
+                    delete_data(pk, is_add_manualy)
+                else:
+                    error_message, pk_mrl = add_meter_reading_manualy(month, year, date_of_read, photo, error_message)
                 if error_message == 'manual_exist':
                     previous_data = find_period_data(int(year), int(month))
                     compared_data, current_data_df = compare_data(request, previous_data, 'dane teraz wpisane',
@@ -62,8 +66,8 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
                                   {'form': form, 'error_message': error_message,
                                    'data_diffrent': compared_data.to_html(index=False),
                                    'komunikat': '''Dane za ten okres rozliczeniowy były już dodawane, 
-                                   Jeśli mimo to chcesz nadpisać dane wybierz zapisz.
-                Jeśli chcesz cofnąć się to wypełnionego formularza wybierz anuluj.'''})
+                                       Jeśli mimo to chcesz nadpisać dane wybierz zapisz.
+                    Jeśli chcesz cofnąć się to wypełnionego formularza wybierz anuluj.'''})
                 else:
                     data_diffrent, error_message, current_data_df = find_wrond_energy_meters_reading(request, year,
                                                                                                      month)
@@ -77,14 +81,23 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
                         save_data_meter_readings(request, pk_mrl)
                         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     elif request.method != 'POST' and pk is not None:
+        # to jest przypadek dla guzika edytuj dane, pokazuje dane jakie sa zapisane dla danego okresu
         data_static, data_dynamic = download_data_to_edit_manual_meter_readings(pk, manualy)
         energymeterform = get_energy_meter_form(energy_meter_fields, data_static=data_static, data_dynamic=data_dynamic,
                                                 is_disable=True)
         form = energymeterform()
     elif request.method == 'POST' and original_form_pk is not None:
+        # to jest przypadek gdzie przeslany jest post oraz zostal zaakceptowanyny dodatkowy formularz
         delete_data(original_form_pk, manualy)
         save_data_meter_readings(original_form_data, original_form_pk)
         change_data_in_meter_reading_list(original_form_pk, original_form_date)
+        return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
+    elif request.method == 'POST' and pk is not None:
+        #todo do wymyslenia jak polaczyc to z pierwsza opjca w tym widoku
+        # to jest przypadek przeslanyh wydetywanych danych
+        delete_data(pk, manualy)
+        save_data_meter_readings(request, pk)
+        change_data_in_meter_reading_list(pk, request.POST.get('date_of_read'), request.FILES.get('image'))
         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     else:
         form = energymeterform()
