@@ -60,6 +60,7 @@ def find_wrond_energy_meters_reading(data_from_form, year: int, month: int) -> [
     else:
         filtered_compared_data = None
         good_data = None
+        error_massage = 'test'
     return filtered_compared_data, error_massage, good_data
 
 

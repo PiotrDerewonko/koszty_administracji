@@ -4,10 +4,12 @@
 
 
 {% block content %}
-            <button class="button"
-                onclick="window.location.href = '{% url 'electricity_cost:dodawanie_faktury'%}'">
+    <div class="container">
+        <button class="button"
+                onclick="window.location.href = '{% url 'electricity_cost:dodawanie_faktury' %}'">
             Dodaj nową fakturę
         </button>
+    </div>
     <div class="table-container">
         <table class="my-table">
             <thead>
@@ -16,6 +18,8 @@
                     <a href="?{% if sort == 'id' %}sort=-id{% else %}sort=id{% endif %}">Identyfikator</a></th>
                 <th>
                     <a href="?{% if sort == 'invoices_number' %}sort=-invoices_number
+                        
+                        
                         {% else %}{% if sort == '-invoices_number' %}sort=-id{% else %}sort=invoices_number{% endif %}{% endif %}">Numer
                         faktury</a></th>
                 <th><a href="?{% if sort == 'cost' %}sort=-cost
@@ -24,10 +28,14 @@
                     {% else %}{% if sort == '-numbers_mwh' %}sort=-id{% else %}sort=numbers_mwh{% endif %}{% endif %}">Ilość
                     MwH</a></th>
                 <th><a href="?{% if sort == 'energysuppliers' %}sort=-energysuppliers
+                    
+                    
                     {% else %}{% if sort == '-energysuppliers' %}sort=-id{% else %}sort=energysuppliers{% endif %}{% endif %}">Dostawca</a>
                 </th>
                 <th>
                     <a href="?{% if sort == 'biling_month__number_of_month' %}sort=-biling_month__number_of_month
+                        
+                        
                         {% else %}{% if sort == '-biling_month__number_of_month' %}sort=-id{% else %}sort=biling_month__number_of_month{% endif %}{% endif %}">Miesiąc
                         Rozrachunkowy</a>
                 </th>
@@ -35,18 +43,22 @@
                     {% else %}{% if sort == '-biling_year' %}sort=-id{% else %}sort=biling_year{% endif %}{% endif %}">Rok
                     Rozrachunkowy</a>
                 </th>
+                <th>
+                    Akcje
+                </th>
             </tr>
             </thead>
             <tbody>
             {% for obj in object_list %}
                 <tr>
-                    <td>{{ obj.id }}</td>
+                    <td><a href="{% url 'electricity_cost:edycja_faktury' pk=obj.id %}">{{ obj.id }}</a></td>
                     <td>{{ obj.invoices_number }}</td>
                     <td>{{ obj.cost }}</td>
                     <td>{{ obj.numbers_mwh }}</td>
                     <td>{{ obj.energysuppliers }}</td>
                     <td>{{ obj.biling_month }}</td>
                     <td>{{ obj.biling_year }}</td>
+                    <td><a href="{% url 'electricity_cost:edycja_faktury' pk=obj.id %}">Edycja</a></td>
                     <!-- Dodaj inne pola według potrzeb -->
                 </tr>
             {% endfor %}

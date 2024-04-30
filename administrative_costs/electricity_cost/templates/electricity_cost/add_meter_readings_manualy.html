@@ -15,7 +15,9 @@
             <input type="hidden" name=error_message value="true">
             <input type="hidden" name=error_message_2 value={{ request }}>
             <!-- Przyciski potwierdzenia i anulowania -->
-            <input type="submit" value="Zatwierdź">
+            {% if error_message != 'wrong_previous_data' %}
+                <input type="submit" value="Zatwierdź">
+            {% endif %}
             <button onclick="window.history.back(); return false;">Anuluj</button>
         </form>
 

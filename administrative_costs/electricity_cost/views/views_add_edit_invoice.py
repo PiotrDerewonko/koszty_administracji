@@ -11,3 +11,10 @@ class InvoicesAddInvoiceView(CreateView):
     template_name = 'electricity_cost/add_invoice.html'
     fields = '__all__'
     success_url = reverse_lazy('electricity_cost:lista_faktur')
+
+@method_decorator(login_required, name='dispatch')
+class EditInvoiceView(UpdateView):
+    model = Invoices
+    template_name = 'electricity_cost/add_invoice.html'
+    fields = '__all__'
+    success_url = reverse_lazy('electricity_cost:lista_faktur')

@@ -1,3 +1,5 @@
+from validators import ValidationError
+
 from ..models import EnergyMeters
 from django.contrib.auth.decorators import login_required
 from ..forms import get_energy_meter_form
@@ -56,7 +58,13 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
                 if pk is not None:
                     delete_data(pk, is_add_manualy)
                 else:
+
                     error_message, pk_mrl = add_meter_reading_manualy(month, year, date_of_read, photo, error_message)
+                    if pk_mrl == 0:
+                        return render(request, 'electricity_cost/add_meter_readings_manualy.html',
+                                      {'form': form, 'error_message': error_message,
+
+                                       'komunikat': '''Brak ciągłości danych. Brak danych za poprzedni okres rozliczeniowy.'''})
                 if error_message == 'manual_exist':
                     previous_data = find_period_data(int(year), int(month))
                     compared_data, current_data_df = compare_data(request, previous_data, 'dane teraz wpisane',
@@ -93,7 +101,7 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
         change_data_in_meter_reading_list(original_form_pk, original_form_date)
         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     elif request.method == 'POST' and pk is not None:
-        #todo do wymyslenia jak polaczyc to z pierwsza opjca w tym widoku
+        # todo do wymyslenia jak polaczyc to z pierwsza opjca w tym widoku
         # to jest przypadek przeslanyh wydetywanych danych
         delete_data(pk, manualy)
         save_data_meter_readings(request, pk)

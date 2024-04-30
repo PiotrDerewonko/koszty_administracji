@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class Invoices(models.Model):
@@ -17,7 +18,6 @@ class Invoices(models.Model):
 
     class Meta:
         unique_together = ['biling_month', 'biling_year', 'energysuppliers', 'cost']
-
 
 
 class EnergySuppliers(models.Model):
@@ -138,16 +138,32 @@ class MeterReadingsList(models.Model):
     biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
     biling_year = models.ForeignKey('Year', verbose_name='Rok rozliczeniowy', on_delete=models.PROTECT)
     date_of_read = models.DateField(verbose_name='Data odczytu', auto_now=False, auto_now_add=False)
-    photo = models.FileField(verbose_name='Zdjecie licznika', upload_to='files/%Y/%m/%d')
-    xlsx_file = models.FileField(verbose_name='Dane z odczytu automatycznego', upload_to='files_xlsx/%Y/%m/%d')
+    photo = models.FileField(verbose_name='Zdjecie licznika', upload_to='files/%Y/%m/%d', null=True, blank=True)
+    xlsx_file = models.FileField(verbose_name='Dane z odczytu automatycznego', upload_to='files_xlsx/%Y/%m/%d',
+                                 null=True, blank=True)
     add_manualy = models.BooleanField(default=False)
     add_automatic = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f'Odczyt za rok: {self.biling_year} oraz miesiac {self.biling_month}'
+    def clean(self):
+        current_year = self.biling_year.id
+        current_month = self.biling_month.id
+        try:
+            previous_month = current_month - 1
+            previous_year = current_year
+            if previous_month == 0:
+                previous_month = 12
+                previous_year -= 1
+            MeterReadingsList.objects.get(biling_month=previous_month, biling_year=previous_year)
+        except ObjectDoesNotExist:
+            raise ValidationError('Nie ma poprzedniego okresu')
 
-    #todo dodac tutaj ograniczenie aby nie mozna bylo dziur miedzy okresami, czyli nie mozna dodac stycznia i marca
+
     class Meta:
         unique_together = ['biling_month', 'biling_year']
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f'Odczyt za rok: {self.biling_year} oraz miesiac {self.biling_month}'

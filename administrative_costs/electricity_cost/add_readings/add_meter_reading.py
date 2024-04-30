@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.db import IntegrityError
 from django.db.utils import Error
+from django.core.exceptions import ValidationError
 
 from ..models import MeterReadingsList
 
@@ -23,10 +24,14 @@ def add_meter_reading_manualy(month, year, date_of_read, photo, error_message) -
             instance_month_year.save()
 
     except MeterReadingsList.DoesNotExist:
-        meter_reading_list_instance = MeterReadingsList.objects.create(**dict_to_save)
-
-    final_instance = MeterReadingsList.objects.get(biling_month=month, biling_year=year)
-    final_instance_pk = final_instance.pk
+        try:
+            meter_reading_list_instance = MeterReadingsList.objects.create(**dict_to_save)
+            final_instance = MeterReadingsList.objects.get(biling_month=month, biling_year=year)
+            final_instance_pk = final_instance.pk
+        except ValidationError as e:
+            # Obsługa błędu ValidationError
+            error_message = "wrong_previous_data"
+            final_instance_pk = 0
 
     return error_message, final_instance_pk
 
