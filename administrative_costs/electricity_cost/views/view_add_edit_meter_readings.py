@@ -36,9 +36,15 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
         original_form_data = request.session['original_form_data']
         original_form_pk = request.session['original_form_pk']
         original_form_date = request.session['original_form_date']
+        try:
+            original_form_image = request.session['original_form_image']
+            request.session.pop('original_form_image', None)
+        except KeyError:
+            original_form_image = None
         request.session.pop('original_form_data', None)
         request.session.pop('original_form_pk', None)
         request.session.pop('original_form_date', None)
+
     except KeyError:
         original_form_data = None
         original_form_pk = None
@@ -58,7 +64,6 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
                 if pk is not None:
                     delete_data(pk, is_add_manualy)
                 else:
-
                     error_message, pk_mrl = add_meter_reading_manualy(month, year, date_of_read, photo, error_message)
                     if pk_mrl == 0:
                         return render(request, 'electricity_cost/add_meter_readings_manualy.html',
@@ -87,6 +92,7 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
                                        'komunikat': 'Dane sa podejrzane'})
                     else:
                         save_data_meter_readings(request, pk_mrl)
+                        #todo dopiero tutaj dac ze dodano dane recznie
                         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     elif request.method != 'POST' and pk is not None:
         # to jest przypadek dla guzika edytuj dane, pokazuje dane jakie sa zapisane dla danego okresu
@@ -98,7 +104,7 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
         # to jest przypadek gdzie przeslany jest post oraz zostal zaakceptowanyny dodatkowy formularz
         delete_data(original_form_pk, manualy)
         save_data_meter_readings(original_form_data, original_form_pk)
-        change_data_in_meter_reading_list(original_form_pk, original_form_date)
+        change_data_in_meter_reading_list(original_form_pk, original_form_date, original_form_image)
         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     elif request.method == 'POST' and pk is not None:
         # todo do wymyslenia jak polaczyc to z pierwsza opjca w tym widoku

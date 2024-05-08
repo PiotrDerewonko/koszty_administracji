@@ -19,10 +19,12 @@ def add_meter_reading_manualy(month, year, date_of_read, photo, error_message) -
                                                                             add_manualy=True)
             error_message = 'manual_exist'
 
+
         except MeterReadingsList.DoesNotExist:
             instance_month_year.add_manualy = True
             instance_month_year.save()
-
+        final_instance = MeterReadingsList.objects.get(biling_month=month, biling_year=year)
+        final_instance_pk = final_instance.pk
     except MeterReadingsList.DoesNotExist:
         try:
             meter_reading_list_instance = MeterReadingsList.objects.create(**dict_to_save)

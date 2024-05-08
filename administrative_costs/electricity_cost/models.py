@@ -145,18 +145,19 @@ class MeterReadingsList(models.Model):
     add_automatic = models.BooleanField(default=False)
 
     def clean(self):
-        current_year = self.biling_year.id
-        current_month = self.biling_month.id
-        try:
-            previous_month = current_month - 1
-            previous_year = current_year
-            if previous_month == 0:
-                previous_month = 12
-                previous_year -= 1
-            MeterReadingsList.objects.get(biling_month=previous_month, biling_year=previous_year)
-        except ObjectDoesNotExist:
-            raise ValidationError('Nie ma poprzedniego okresu')
-
+        all_readings = MeterReading.objects.all()
+        if len(all_readings) > 0:
+            current_year = self.biling_year.id
+            current_month = self.biling_month.id
+            try:
+                previous_month = current_month - 1
+                previous_year = current_year
+                if previous_month == 0:
+                    previous_month = 12
+                    previous_year -= 1
+                MeterReadingsList.objects.get(biling_month=previous_month, biling_year=previous_year)
+            except ObjectDoesNotExist:
+                raise ValidationError('Nie ma poprzedniego okresu')
 
     class Meta:
         unique_together = ['biling_month', 'biling_year']

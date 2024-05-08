@@ -152,6 +152,9 @@ def save_data_to_sesion(current_data_df, request, pk_mrl) -> None:
     request.session['original_form_data'] = dict_with_data_from_form
     request.session['original_form_pk'] = pk_mrl
     request.session['original_form_date'] = request.POST['date_of_read']
+    param_value = request.GET.get('image')
+    if param_value is not None:
+        request.session['original_form_image'] = request.FILES['image']
 
 
 def chack_data_from_xlsx(data, pk) -> pd.DataFrame:
