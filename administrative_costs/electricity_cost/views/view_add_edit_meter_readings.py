@@ -4,8 +4,9 @@ from ..models import EnergyMeters
 from django.contrib.auth.decorators import login_required
 from ..forms import get_energy_meter_form
 from django.shortcuts import render, redirect
-from ..add_readings.add_meter_reading import add_meter_reading_manualy
-from ..add_readings.find_previous_period import find_period_data
+from ..add_readings.energy_consumption import delete_energy_consumption, add_energy_consumption
+from ..add_readings.add_meter_reading import add_meter_reading_manualy, change_add_manualy, find_month_year
+from ..add_readings.find_previous_period import find_period_data, find_next_period
 from ..add_readings.modificate_data import (find_wrond_energy_meters_reading, compare_data, save_data_meter_readings,
                                             delete_data, change_data_in_meter_reading_list, save_data_to_sesion)
 from ..add_readings.download_data import download_data_to_edit_manual_meter_readings
@@ -86,13 +87,14 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
                                                                                                      month)
                     if error_message == 'wrong_insert_data':
                         save_data_to_sesion(current_data_df, request, pk_mrl)
+                        # change_add_manualy(month, year)
                         return render(request, 'electricity_cost/add_meter_readings_manualy.html',
                                       {'form': form, 'error_message': error_message,
                                        'data_diffrent': data_diffrent.to_html(index=False),
                                        'komunikat': 'Dane sa podejrzane'})
                     else:
                         save_data_meter_readings(request, pk_mrl)
-                        #todo dopiero tutaj dac ze dodano dane recznie
+                        add_energy_consumption(int(year), int(month))
                         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     elif request.method != 'POST' and pk is not None:
         # to jest przypadek dla guzika edytuj dane, pokazuje dane jakie sa zapisane dla danego okresu
@@ -103,6 +105,8 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
     elif request.method == 'POST' and original_form_pk is not None:
         # to jest przypadek gdzie przeslany jest post oraz zostal zaakceptowanyny dodatkowy formularz
         delete_data(original_form_pk, manualy)
+        year, month = find_month_year(original_form_pk)
+        add_energy_consumption(year, month)
         save_data_meter_readings(original_form_data, original_form_pk)
         change_data_in_meter_reading_list(original_form_pk, original_form_date, original_form_image)
         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
@@ -111,6 +115,10 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
         # to jest przypadek przeslanyh wydetywanych danych
         delete_data(pk, manualy)
         save_data_meter_readings(request, pk)
+        year, month = find_month_year(pk)
+        add_energy_consumption(year, month)
+        next_year, next_month = find_next_period(year, month)
+        add_energy_consumption(next_year, next_month)
         change_data_in_meter_reading_list(pk, request.POST.get('date_of_read'), request.FILES.get('image'))
         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     else:

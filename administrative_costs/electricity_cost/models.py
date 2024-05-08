@@ -113,8 +113,8 @@ class CounterUsage(models.Model):
     nie bedzie uruchamiany"""
     energy_meter = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT, verbose_name='Licznik')
     usage = models.FloatField(verbose_name='Zużycie licznika')
-    biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
-    biling_year = models.ForeignKey('Year', verbose_name='Rok rozliczeniowy', on_delete=models.PROTECT)
+    reading_name = models.ForeignKey('MeterReadingsList', on_delete=models.PROTECT, verbose_name='Nazwa odczytu')
+
 
     def __str__(self):
         return f'''Zużycie licznika z w wysokości {self.usage}'''

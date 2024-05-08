@@ -39,7 +39,7 @@ class YearAdmin(admin.ModelAdmin):
 
 
 class CounterUsageAdmin(admin.ModelAdmin):
-    list_display = ['id', 'energy_meter', 'usage', 'biling_month', 'biling_year']
+    list_display = ['id', 'energy_meter', 'usage', 'reading_name']
     list_filter = ['energy_meter']
 
 

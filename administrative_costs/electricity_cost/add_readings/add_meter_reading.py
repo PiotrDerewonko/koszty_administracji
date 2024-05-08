@@ -62,3 +62,18 @@ def add_meter_reading_automatic(month, year, file) -> [int]:
     final_instance_pk = final_instance.pk
 
     return final_instance_pk
+
+
+def change_add_manualy(month, year) -> None:
+    """Zadaniem funkcji jest zmiana parametru add_manualy na false gdy nie udalo sie zapisac danych."""
+    instance_month_year = MeterReadingsList.objects.get(biling_month=month, biling_year=year)
+    instance_month_year.add_manualy = False
+    instance_month_year.save()
+
+
+def find_month_year(pk) -> [int, int]:
+    """Zadaniem funkcji jest odnalezienie jakiego miesiaca i roku obliczeniowwego dotyczy dane id listy odczytow."""
+    instance_month_year = MeterReadingsList.objects.get(pk=pk)
+    year_to_return = instance_month_year.biling_year_id
+    month_to_return = instance_month_year.biling_month_id
+    return year_to_return, month_to_return

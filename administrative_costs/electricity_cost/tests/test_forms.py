@@ -41,11 +41,9 @@ class FormTests(TestCase):
         form_class = get_energy_meter_form(data)
         form_instance = form_class(data={'Electricity Meter': 1, 'year': 111, 'month': 11, 'date_of_read': '202-01-01'})
         a = form_instance.is_valid()
-        self.assertFalse(form_instance.is_valid())  #
+        self.assertFalse(form_instance.is_valid())
 
     def test_save_meter_reading_list_correct(self):
-        test = MeterReadingsList.objects.all()
-        a = len(test)
         error_message, pk = add_meter_reading_manualy(2, 1, '2023-01-01', None, None)
         self.assertEqual(error_message, None)
 
