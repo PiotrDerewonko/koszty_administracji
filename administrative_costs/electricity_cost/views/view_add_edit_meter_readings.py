@@ -117,8 +117,11 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
         save_data_meter_readings(request, pk)
         year, month = find_month_year(pk)
         add_energy_consumption(year, month)
-        next_year, next_month = find_next_period(year, month)
-        add_energy_consumption(next_year, next_month)
+        try:
+            next_year, next_month = find_next_period(year, month)
+            add_energy_consumption(next_year, next_month)
+        except IndexError:
+            pass  # nie trzeba nic robic
         change_data_in_meter_reading_list(pk, request.POST.get('date_of_read'), request.FILES.get('image'))
         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     else:

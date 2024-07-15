@@ -4,7 +4,7 @@
 
 
 {% block content %}
-    <div class="container">
+    <div class="mx-auto" style="width: 200px;">
         <button class="button"
                 onclick="window.location.href = '{% url 'electricity_cost:dodawanie_reczne_licznikow' is_add_manualy='true' %}'">
             Dodaj nowy
@@ -14,16 +14,21 @@
                 onclick="window.location.href = '{% url 'electricity_cost:dodawanie_automatyczne_odczytow' %}'">
             Dodaj nowy odczyt z danych automatycznych
         </button>
-        
+
     </div>
     <div class="table-container">
-        <table class="my-table">
+        <table class="table table-striped table-bordered">
             <thead>
             <tr>
-                <th>Identyfikator</th>
-                <th>Rok Rozliczeniowy</th>
-                <th>Miesiąc Rozliczeniowy</th>
-                <th>Data odczytu</th>
+                <th><a href="?{% if sort == 'id' %}sort=-id{% else %}sort=id{% endif %}">Identyfikator</a></th>
+                <th><a href="?{% if sort == 'biling_year' %}sort=-biling_year
+                    {% else %}{% if sort == '-biling_year' %}sort=-id{% else %}sort=biling_year{% endif %}{% endif %}">Rok
+                    Rozliczeniowy</a></th>
+                <th><a href="?{% if sort == 'biling_month' %}sort=-biling_month
+                    {% else %}{% if sort == '-biling_month' %}sort=-id{% else %}sort=biling_month{% endif %}{% endif %}">Miesiąc
+                    Rozliczeniowy</a></th>
+                <th><a href="?{% if sort == 'date_of_read' %}sort=-date_of_read
+                    {% else %}{% if sort == '-date_of_read' %}sort=-id{% else %}sort=date_of_read{% endif %}{% endif %}">Data odczytu</a></th>
                 <th>Dodany<br>odczyt automatyczny</th>
                 <th>Dodany<br>odczyt ręczny</th>
                 <th>Akcje</th>
@@ -37,8 +42,16 @@
                     <td>{{ obj.biling_year }}</td>
                     <td>{{ obj.biling_month }}</td>
                     <td>{{ obj.date_of_read|date:"Y-m-d" }}</td>
-                    <td>{{ obj.add_automatic }}</td>
-                    <td>{{ obj.add_manualy }}</td>
+                    {% if obj.add_automatic %}
+                        <td>Dodano</td>
+                    {% else %}
+                        <td>Nie dodano</td>
+                    {% endif %}
+                    {% if obj.add_manualy %}
+                        <td>Dodano</td>
+                    {% else %}
+                        <td>Nie dodano</td>
+                    {% endif %}
                     <td>
                         <a href="{% url 'electricity_cost:edycja_odczytow_licznikow' pk=obj.id is_add_manualy='true' %}">Edycja
                             danych ręcznych</a><br>

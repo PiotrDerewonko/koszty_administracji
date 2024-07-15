@@ -2,18 +2,18 @@
 {% load django_bootstrap5 %}
 {% block sidebar %}
     <nav>
-        <ul>
-            <li><a {% if active_tab == 'invoices_list' %} class='active' {% endif %}
+        <ul class="nav bg-info">
+            <li class="nav-item"><a class='nav-link link-light' {% if active_tab == 'invoices_list' %}  {% endif %}
                                                           href="{% url 'electricity_cost:lista_faktur' %}">Lista
                 faktur</a>
             </li>
-            <li><a {% if active_tab == 'readings_list' %} class='active' {% endif %}
+            <li class="nav-item"><a class='nav-link link-light' {% if active_tab == 'readings_list' %}  {% endif %}
                                                           href="{% url 'electricity_cost:lista_odczytów' %}">Lista
                 odczytów</a>
             </li>
 
 
-            <li>{% if user.is_authenticated %}
+            <li class="nav-item">{% if user.is_authenticated %}
                 <p class="nav-link">
                     {{ user.username }} | <a href="{% url 'custom_logout' %}">logout</a>
                 </p>

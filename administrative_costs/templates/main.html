@@ -4,7 +4,10 @@
 <head>
     {% load static %}
     {# Load CSS and JavaScript #}
+    {#    {% bootstrap_css %}#}
+    {% load bootstrap5 %}
     {% bootstrap_css %}
+    {% bootstrap_javascript %}
     <meta charset="UTF-8">
     <title>{% block title %}{{ title }}{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">

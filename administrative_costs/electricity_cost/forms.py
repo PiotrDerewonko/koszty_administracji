@@ -18,6 +18,7 @@ def get_energy_meter_form(energy_meters_fields, data_static=None, data_dynamic=N
         'date_of_read': forms.DateField(label='Data odczytu', required=True,
                                         widget=forms.DateInput(attrs={'type': 'date'}),
                                         initial=data_static[2] if data_static else None),
+        #todo zastanwoic sie jak przekazac tutaj plik xlsx
         'image': forms.FileField(label='Dodaj jeden plik ze zdjęciami', required=False
                                  , validators=[
                 FileExtensionValidator(allowed_extensions=['zip', 'rar', 'tar', 'tar.gz', 'tar'])],

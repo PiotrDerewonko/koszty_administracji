@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ..models import EnergyMeters, MeterShares, MeterLocations, Month, Year, Invoices, EnergySuppliers
+from ..models import EnergyMeters, MeterShares, MeterLocations, Month, Year, Invoices, EnergySuppliers, TypeOfInvoice
 from django.core.exceptions import ValidationError
 
 
@@ -46,3 +46,11 @@ class InvoicesTest(TestCase):
         i1 = Invoices.objects.get(pk=1)
         self.assertEqual(str(i1), 'Testowa Faktura')
         self.assertEqual(i1.cost, 1)
+
+class TestTypyInvoices(TestCase):
+    def setUp(self):
+        TypeOfInvoice.objects.create(name='Testowy typ')
+
+    def test_create_type_of_invoice(self):
+        i1 = TypeOfInvoice.objects.get(pk=1)
+        self.assertEqual(str(i1), 'Testowy typ')

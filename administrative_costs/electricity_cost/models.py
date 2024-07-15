@@ -96,6 +96,15 @@ class Year(models.Model):
         return self.name
 
 
+class TypeOfInvoice(models.Model):
+    """Model odpowiedzialny za słownik typów faktur. Na początku występować będą tylko dwa typpy tzn
+    za energie i za przesyl"""
+    name = models.CharField(max_length=250, verbose_name='Typ faktury')
+
+    def __str__(self):
+        return self.name
+
+
 class MeterReading(models.Model):
     energy_meter = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT, verbose_name='Licznik')
     meter_reading = models.FloatField(verbose_name='Odczyt licznika')
@@ -114,7 +123,6 @@ class CounterUsage(models.Model):
     energy_meter = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT, verbose_name='Licznik')
     usage = models.FloatField(verbose_name='Zużycie licznika')
     reading_name = models.ForeignKey('MeterReadingsList', on_delete=models.PROTECT, verbose_name='Nazwa odczytu')
-
 
     def __str__(self):
         return f'''Zużycie licznika z w wysokości {self.usage}'''
