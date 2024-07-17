@@ -17,10 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .views import custom_logout
+from electricity_cost.views.view_home_page import HomePageView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('ele_cost/', include('electricity_cost.urls')),
     path('accounts/logout/', custom_logout, name='custom_logout'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('', HomePageView.as_view(), name='home')
 ]

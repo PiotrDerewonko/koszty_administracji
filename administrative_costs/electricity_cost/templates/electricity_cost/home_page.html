@@ -1,0 +1,17 @@
+{% extends 'electricity_cost/electricity_cost_main.html' %}
+{% load custom_filters %}
+<title>{% block title %}{{ title }}{% endblock %}</title>
+
+
+{% block content %}
+    <div class="mx-auto" style="width: 200px;">
+            <button class="button"
+                onclick="window.location.href = '{% url 'electricity_cost:lista_faktur' %}'">
+            Lista faktur
+        </button>
+                <button class="button"
+                onclick="window.location.href = '{% url 'electricity_cost:lista_odczytów' %}'">
+            Lista odczytów
+        </button>
+    </div>
+{% endblock %}

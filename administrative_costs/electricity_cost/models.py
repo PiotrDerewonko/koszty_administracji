@@ -18,8 +18,7 @@ class Invoices(models.Model):
         return self.invoices_number
 
     class Meta:
-        unique_together = ['biling_month', 'biling_year', 'energysuppliers', 'cost']
-
+        unique_together = ['biling_month', 'biling_year', 'type_of_invoice']
 
 class EnergySuppliers(models.Model):
     name = models.CharField(max_length=250)
@@ -55,6 +54,8 @@ class EnergyMeters(models.Model):
     institute_share = models.ForeignKey('MeterShares', on_delete=models.PROTECT, related_name='institute_share',
                                         default=6, verbose_name='Udział Instytutu')
     is_add_manual = models.BooleanField(default=False, verbose_name='Licznik dodawany ręcznie')
+    conversion_factor = models.FloatField(verbose_name='Przelicznik', default=1.00)
+    is_virtual = models.BooleanField(verbose_name='Czy wirtualny', default=False)
 
     def clean(self):
 

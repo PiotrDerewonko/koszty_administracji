@@ -11,7 +11,8 @@ class InvoicesAdmin(admin.ModelAdmin):
 
 
 class EnergyMetersAdmin(admin.ModelAdmin):
-    list_display = ['name', 'meter_location', 'museum_share', 'cob_share', 'parish_share', 'institute_share']
+    list_display = ['name', 'meter_location', 'museum_share', 'cob_share', 'parish_share', 'institute_share',
+                    'conversion_factor', 'is_virtual']
     list_filter = ['name', 'meter_location']
     search_fields = ['name']
     search_help_text = 'Szukaj po nazwie licznika'
@@ -46,8 +47,10 @@ class CounterUsageAdmin(admin.ModelAdmin):
 class EnergyMeterTreeAdmin(admin.ModelAdmin):
     list_display = ['id', 'energy_meter_main', 'energy_meter_submain']
 
+
 class MeterReadingListAdmin(admin.ModelAdmin):
     list_display = ['id', 'biling_month', 'biling_year', 'add_manualy', 'add_automatic']
+
 
 class TypeOfInvoiceAdmin(admin.ModelAdmin):
     list_display = ['name']
