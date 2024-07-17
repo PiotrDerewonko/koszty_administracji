@@ -12,6 +12,7 @@ class Invoices(models.Model):
                                         verbose_name='Dostawca')
     biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
     biling_year = models.ForeignKey('Year', verbose_name='Rok rozliczeniowy', on_delete=models.PROTECT)
+    type_of_invoice = models.ForeignKey('TypeOfInvoice', on_delete=models.PROTECT, verbose_name='Typ faktury')
 
     def __str__(self):
         return self.invoices_number

@@ -36,11 +36,12 @@ class InvoicesTest(TestCase):
         Month.objects.create(name='styczen', number_of_month=1)
         Year.objects.create(name=2024)
         EnergySuppliers.objects.create(name='PGE')
+        TypeOfInvoice.objects.create(name='test')
 
     def setUp(self):
         Invoices.objects.create(invoices_number='Testowa Faktura', cost=1, cost_per_1_mwh=1, numbers_mwh=1,
                                 energysuppliers_id=1,
-                                biling_month_id=1, biling_year_id=1)
+                                biling_month_id=1, biling_year_id=1, type_of_invoice_id=1)
 
     def test_create_invoice(self):
         i1 = Invoices.objects.get(pk=1)

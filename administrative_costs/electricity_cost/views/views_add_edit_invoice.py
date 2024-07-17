@@ -12,6 +12,11 @@ class InvoicesAddInvoiceView(CreateView):
     fields = '__all__'
     success_url = reverse_lazy('electricity_cost:lista_faktur')
 
+    def form_invalid(self, form):
+        print(form.errors)  # Dodaj debugowanie, aby zobaczyć błędy formularza
+        return super().form_invalid(form)
+
+
 @method_decorator(login_required, name='dispatch')
 class EditInvoiceView(UpdateView):
     model = Invoices
