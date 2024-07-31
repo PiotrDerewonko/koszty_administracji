@@ -48,6 +48,7 @@ class InvoicesTest(TestCase):
         self.assertEqual(str(i1), 'Testowa Faktura')
         self.assertEqual(i1.cost, 1)
 
+
 class TestTypyInvoices(TestCase):
     def setUp(self):
         TypeOfInvoice.objects.create(name='Testowy typ')
