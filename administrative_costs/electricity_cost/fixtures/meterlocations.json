@@ -1,0 +1,2 @@
+File tracking disabled
+[{"model": "electricity_cost.meterlocations", "pk": 1, "fields": {"name": "Instytut"}}, {"model": "electricity_cost.meterlocations", "pk": 2, "fields": {"name": "COB"}}, {"model": "electricity_cost.meterlocations", "pk": 3, "fields": {"name": "Muzeum JP2"}}, {"model": "electricity_cost.meterlocations", "pk": 4, "fields": {"name": "Tereny Zewnętrzne"}}]

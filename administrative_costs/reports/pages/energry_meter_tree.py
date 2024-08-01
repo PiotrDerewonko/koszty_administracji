@@ -2,7 +2,7 @@ import streamlit as st
 import graphviz
 import os
 import pandas as pd
-from connections.connect_to_databse import connect_to_databse
+from ..connections.connect_to_databse import connect_to_databse
 
 
 
