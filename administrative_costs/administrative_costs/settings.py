@@ -38,8 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'electricity_cost',
-    'django_bootstrap5',
-    'bootstrap5'
+    'django_bootstrap5'
 ]
 
 MIDDLEWARE = [
