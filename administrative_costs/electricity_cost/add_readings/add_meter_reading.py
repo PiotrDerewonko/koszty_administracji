@@ -41,7 +41,7 @@ def add_meter_reading_manualy(month, year, date_of_read, photo, error_message) -
 def add_meter_reading_automatic(month, year, file) -> [int]:
     """Funkcja ktorej zadnaiem jest utworzenie nowej instancji modelu MeterReadingsList, a w wypadku gdy
     taka instancja juz istnieje sprawdzenie czy byly dodwane wartosci automatyczne"""
-    dict_to_save = {'file': file, 'biling_month_id': month,
+    dict_to_save = {'xlsx_file': file, 'biling_month_id': month,
                     'biling_year_id': year, 'add_automatic': True}
 
     try:

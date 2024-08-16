@@ -20,6 +20,7 @@ class Invoices(models.Model):
     class Meta:
         unique_together = ['biling_month', 'biling_year', 'type_of_invoice']
 
+
 class EnergySuppliers(models.Model):
     name = models.CharField(max_length=250)
 
@@ -59,9 +60,10 @@ class EnergyMeters(models.Model):
 
     def clean(self):
 
-        if float(self.museum_share.value) + float(self.cob_share.value) + float(self.parish_share.value) + int(
+        if float(self.museum_share.value) + float(self.cob_share.value) + float(self.parish_share.value) + float(
                 self.institute_share.value) != 1:
-            if self.museum_share_id == 1 or self.cob_share_id == 1 or self.parish_share_id == 1 or self.institute_share_id == 1:
+            if (self.museum_share_id == 1 or self.cob_share_id == 1 or self.parish_share_id == 1
+                    or self.institute_share_id == 1):
                 if float(self.museum_share.value) + float(self.cob_share.value) + float(
                         self.parish_share.value) + float(self.institute_share.value) != 0.9999:
                     raise ValidationError('Suma liczników musi być równa 1')
@@ -151,7 +153,8 @@ class MeterReadingsList(models.Model):
     2) latwe wyszukiwanie w tabeli z odczytami, odczytow dotyczacych danego roku i miesiaca"""
     biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
     biling_year = models.ForeignKey('Year', verbose_name='Rok rozliczeniowy', on_delete=models.PROTECT)
-    date_of_read = models.DateField(verbose_name='Data odczytu', auto_now=False, auto_now_add=False)
+    date_of_read = models.DateField(verbose_name='Data odczytu', auto_now=False, auto_now_add=False, null=True,
+                                    blank=True)
     photo = models.FileField(verbose_name='Zdjecie licznika', upload_to='files/%Y/%m/%d', null=True, blank=True)
     xlsx_file = models.FileField(verbose_name='Dane z odczytu automatycznego', upload_to='files_xlsx/%Y/%m/%d',
                                  null=True, blank=True)
