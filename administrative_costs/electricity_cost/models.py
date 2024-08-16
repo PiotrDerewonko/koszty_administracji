@@ -125,6 +125,10 @@ class CounterUsage(models.Model):
     energy_meter = models.ForeignKey('EnergyMeters', on_delete=models.PROTECT, verbose_name='Licznik')
     usage = models.FloatField(verbose_name='Zużycie licznika')
     reading_name = models.ForeignKey('MeterReadingsList', on_delete=models.PROTECT, verbose_name='Nazwa odczytu')
+    usage_institute = models.FloatField(verbose_name='Zużycie instytutu')
+    usage_museum = models.FloatField(verbose_name='Zużycie muzeum')
+    usage_cob = models.FloatField(verbose_name='Zużycie COB')
+    usage_parish = models.FloatField(verbose_name='Zużycie parafii')
 
     def __str__(self):
         return f'''Zużycie licznika z w wysokości {self.usage}'''

@@ -1,4 +1,4 @@
-select main.name as licznik_main, submain.name as licznik_submain from electricity_cost_energymetertree tree
+select main.name as licznik_main, submain.name as licznik_submain, main.is_virtual from electricity_cost_energymetertree tree
 left outer join electricity_cost_energymeters main
 on tree.energy_meter_main_id = main.id
 left outer join electricity_cost_energymeters submain
