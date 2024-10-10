@@ -9,17 +9,39 @@ from django.urls import reverse_lazy
 class InvoicesAddInvoiceView(CreateView):
     model = Invoices
     template_name = 'electricity_cost/add_invoice.html'
-    fields = '__all__'
+    fields = ['invoices_number', 'cost', 'numbers_mwh', 'energysuppliers', 'biling_month', 'biling_year',
+              'type_of_invoice']
     success_url = reverse_lazy('electricity_cost:lista_faktur')
 
-    def form_invalid(self, form):
-        print(form.errors)  # Dodaj debugowanie, aby zobaczyć błędy formularza
-        return super().form_invalid(form)
+    def form_valid(self, form):
+        # Pobieramy wartości z formularza
+        total_cost = form.cleaned_data.get('cost')
+        mwh = form.cleaned_data.get('numbers_mwh')
+
+        # Obliczamy koszt za 1 kWh
+        if mwh and mwh > 0:
+            cost_per_mwh = total_cost / mwh
+            form.instance.cost_per_1_mwh = cost_per_mwh
+
+        return super().form_valid(form)
 
 
 @method_decorator(login_required, name='dispatch')
 class EditInvoiceView(UpdateView):
     model = Invoices
     template_name = 'electricity_cost/add_invoice.html'
-    fields = '__all__'
+    fields = ['invoices_number', 'cost', 'numbers_mwh', 'energysuppliers', 'biling_month', 'biling_year',
+              'type_of_invoice']
     success_url = reverse_lazy('electricity_cost:lista_faktur')
+
+    def form_valid(self, form):
+        # Pobieramy wartości z formularza
+        total_cost = form.cleaned_data.get('cost')
+        mwh = form.cleaned_data.get('numbers_mwh')
+
+        # Obliczamy koszt za 1 kWh
+        if mwh and mwh > 0:
+            cost_per_mwh = total_cost / mwh
+            form.instance.cost_per_1_mwh = cost_per_mwh
+
+        return super().form_valid(form)

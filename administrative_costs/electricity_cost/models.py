@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 class Invoices(models.Model):
     invoices_number = models.CharField(verbose_name='Numer faktury', max_length=250)
     cost = models.FloatField(verbose_name='Koszt z faktury')
-    cost_per_1_mwh = models.FloatField(verbose_name='Koszt za 1 MWH')
+    cost_per_1_mwh = models.FloatField(verbose_name='Koszt za 1 MWH', null=True, blank=True)
     numbers_mwh = models.FloatField(verbose_name='Ilość zużytych MWH')
     energysuppliers = models.ForeignKey('EnergySuppliers', on_delete=models.PROTECT,
                                         verbose_name='Dostawca')

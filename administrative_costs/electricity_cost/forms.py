@@ -18,21 +18,26 @@ def get_energy_meter_form(energy_meters_fields, data_static=None, data_dynamic=N
         'date_of_read': forms.DateField(label='Data odczytu', required=True,
                                         widget=forms.DateInput(attrs={'type': 'date'}),
                                         initial=data_static[2] if data_static else None),
-        #todo zastanwoic sie jak przekazac tutaj plik xlsx
+        # todo zastanwoic sie jak przekazac tutaj plik xlsx
         'image': forms.FileField(label='Dodaj jeden plik ze zdjęciami', required=False
                                  , validators=[
                 FileExtensionValidator(allowed_extensions=['zip', 'rar', 'tar', 'tar.gz', 'tar'])],
-                                 initial=data_static[3] if data_static else None),
+                                 initial=data_static[3] if data_static else None)}
 
-    }
     if data_dynamic == None:
         for field in energy_meters_fields:
             field_name = field.name
-            fields[field_name] = forms.FloatField(required=True, min_value=0)
+            fields[field_name] = forms.FloatField(required=True, min_value=0,
+                                                  widget=forms.NumberInput(attrs={'class': 'text-right'}),
+                                                  help_text=field.technical_name
+                                                  )
     else:
         for field in data_dynamic:
             field_name = field.energy_meter.name
-            fields[field_name] = forms.FloatField(required=True, initial=field.meter_reading, min_value=0)
+
+            fields[field_name] = forms.FloatField(required=True, initial=field.meter_reading, min_value=0,
+                                                  widget=forms.NumberInput(attrs={'class': 'text-right'}),
+                                                  help_text=field.energy_meter.technical_name)
 
     EnergyMeterFormClass = type('EnergyMeterForm', (forms.Form,), fields)
     return EnergyMeterFormClass

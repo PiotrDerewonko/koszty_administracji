@@ -11,8 +11,8 @@ class InvoicesAdmin(admin.ModelAdmin):
 
 
 class EnergyMetersAdmin(admin.ModelAdmin):
-    list_display = ['name', 'meter_location', 'museum_share', 'cob_share', 'parish_share', 'institute_share',
-                    'conversion_factor', 'is_virtual']
+    list_display = ['name','technical_name', 'meter_location', 'museum_share', 'cob_share', 'parish_share', 'institute_share',
+                    'conversion_factor', 'is_virtual', 'is_add_manual']
     list_filter = ['name', 'meter_location']
     search_fields = ['name']
     search_help_text = 'Szukaj po nazwie licznika'

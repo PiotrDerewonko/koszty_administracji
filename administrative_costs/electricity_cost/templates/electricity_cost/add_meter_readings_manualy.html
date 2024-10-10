@@ -51,6 +51,7 @@
                     <thead>
                     <tr>
                         <th>Nazwa licznika</th>
+                        <th>Numer tablicy rozdzielczej</th>
                         <th>Wartość odczytu</th>
                     </tr>
                     </thead>
@@ -58,6 +59,7 @@
                         {% if i.name != 'year' and i.name != 'month' and i.name != 'date_of_read' and i.name != 'image' %}
                             <tr>
                                 <td>{{ i.name }}</td>
+                                <td>{{ i.help_text }}</td>
                                 <td>{{ i }}</td>
                             </tr>
                         {% endif %}

@@ -18,7 +18,12 @@ with st.container(border=True):
 
     # tworze graf
     graph = graphviz.Digraph()
-    graph.attr(rankdir='LR')
+    # graph.attr(rankdir='LR')
+    # graph.attr(margin='0')
+      # Rozmiar 10x7 cali; znak "!" wymusza dokładny rozmiar
+    # graph.graph_attr['dpi'] = '100'
+    # graph.attr(ratio='fill')
+
     for i, j in data.iterrows():
         graph.edge(str(j['licznik_main']), str(j['licznik_submain']))
         if j['is_virtual']:
@@ -27,6 +32,7 @@ with st.container(border=True):
         st.markdown(
             '''Kolorem żółtym są zaznaczone liczniki tzw. wirtualne tzn. takie które nie występją w rzeczywistości ale 
             są niezbędne do prawidlowego liczenia raportów, oraz lepszego zrozuminia topologi sieci.''')
+        graph.attr(rankdir='LR', dpi='80', ratio='fill', margins='0', pad='0.5', splines='True')
         st.graphviz_chart(graph)
 
     with st.expander('Tabela z danymi'):

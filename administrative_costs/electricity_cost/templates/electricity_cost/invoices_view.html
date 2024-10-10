@@ -22,6 +22,8 @@
 
                         
                         
+                        
+                        
                         {% else %}{% if sort == '-invoices_number' %}sort=-id{% else %}sort=invoices_number{% endif %}{% endif %}">Numer
                         faktury</a></th>
                 <th><a href="?{% if sort == 'cost' %}sort=-cost
@@ -34,12 +36,16 @@
 
                     
                     
+                    
+                    
                     {% else %}{% if sort == '-energysuppliers' %}sort=-id{% else %}sort=energysuppliers{% endif %}{% endif %}">Dostawca</a>
                 </th>
                 <th>
                     <a href="?{% if sort == 'biling_month__number_of_month' %}sort=-biling_month__number_of_month
 
 
+                        
+                        
                         
                         
                         {% else %}{% if sort == '-biling_month__number_of_month' %}sort=-id{% else %}sort=biling_month__number_of_month{% endif %}{% endif %}">Miesiąc
@@ -50,6 +56,8 @@
                     Rozrachunkowy</a>
                 </th>
                 <th><a href="?{% if sort == 'type_of_invoice' %}sort=-type_of_invoice
+                    
+                    
                     
                     
                     {% else %}{% if sort == '-type_of_invoice' %}sort=-id{% else %}sort=type_of_invoice{% endif %}{% endif %}">Typ
@@ -65,14 +73,13 @@
                 <tr>
                     <td><a href="{% url 'electricity_cost:edycja_faktury' pk=obj.id %}">{{ obj.id }}</a></td>
                     <td>{{ obj.invoices_number }}</td>
-                    <td>{{ obj.cost }}</td>
+                    <td>{{ obj.cost }} zł</td>
                     <td>{{ obj.numbers_mwh }}</td>
                     <td>{{ obj.energysuppliers }}</td>
                     <td>{{ obj.biling_month }}</td>
                     <td>{{ obj.biling_year }}</td>
                     <td>{{ obj.type_of_invoice }}</td>
                     <td><a href="{% url 'electricity_cost:edycja_faktury' pk=obj.id %}">Edycja</a></td>
-                    <!-- Dodaj inne pola według potrzeb -->
                 </tr>
             {% endfor %}
             </tbody>
