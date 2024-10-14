@@ -8,7 +8,8 @@ select ecm.name                as licnzik,
        ecc.usage_museum,
        ecc.usage_parish,
        is_virtual,
-       is_add_manual
+       is_add_manual,
+       ecm.id as id_licznika
 from electricity_cost_energymeters ecm
          left join electricity_cost_meterreadingslist ecml
          left outer join electricity_cost_meterreading ecm2
