@@ -106,8 +106,8 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
         # to jest przypadek gdzie przeslany jest post oraz zostal zaakceptowanyny dodatkowy formularz
         delete_data(original_form_pk, manualy)
         year, month = find_month_year(original_form_pk)
-        add_energy_consumption(year, month)
         save_data_meter_readings(original_form_data, original_form_pk)
+        add_energy_consumption(year, month)
         change_data_in_meter_reading_list(original_form_pk, original_form_date, original_form_image)
         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     elif request.method == 'POST' and pk is not None:

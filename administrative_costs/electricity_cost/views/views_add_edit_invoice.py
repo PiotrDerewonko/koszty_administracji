@@ -1,4 +1,4 @@
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from ..models import Invoices
 from django.utils.decorators import method_decorator
@@ -45,3 +45,9 @@ class EditInvoiceView(UpdateView):
             form.instance.cost_per_1_mwh = cost_per_mwh
 
         return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class DeleteInvoiceView(DeleteView):
+    model = Invoices
+    template_name = 'electricity_cost/delete_invoice.html'
+    success_url = reverse_lazy('electricity_cost:lista_faktur')

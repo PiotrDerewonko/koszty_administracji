@@ -1,6 +1,6 @@
 select ecm.name                as licnzik,
        ecm2.meter_reading,
-       ecmonth.number_of_month as miesiac,
+       ecmonth.number_of_month as number_of_month,
        ecy.name as rok,
        ecc.usage,
        ecc.usage_cob,
@@ -20,4 +20,4 @@ from electricity_cost_energymeters ecm
                          on ecm.id = ecc.energy_meter_id and ecml.id = ecc.reading_name_id
 left outer join electricity_cost_year ecy
 on ecml.biling_year_id = ecy.id
-order by ecm.name, miesiac
+order by ecm.name, number_of_month

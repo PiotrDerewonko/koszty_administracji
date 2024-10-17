@@ -20,6 +20,7 @@ def add_energy_consumption(year: int, month: int) -> None:
     mrl_id = mrl_pk[0].id
     energy_meters_query = EnergyMeters.objects.select_related('museum_share', 'cob_share', 'parish_share',
                                                               'institute_share')
+    #todo dodac tutaj odczyt poczatkowy licznika i odejmowac go od obu wartosci
     data = []
     for meter in energy_meters_query:
         data.append({
@@ -59,7 +60,6 @@ def add_energy_consumption(year: int, month: int) -> None:
     data_to_save['usage_cob'] = data_to_save['difference'] * data_to_save['cob_share']
     data_to_save['usage_museum'] = data_to_save['difference'] * data_to_save['museum_share']
 
-    # todo dorobic tutaj przeliczenie wirtualnych licznikow
     data_to_save = add_virtual_energy_consumption(data_to_save, month)
 
     # zapis danych

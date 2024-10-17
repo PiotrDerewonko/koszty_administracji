@@ -1,0 +1,6 @@
+<form method="post">
+    {% csrf_token %}
+    <p>Czy na pewno chcesz usunąć ten obiekt?</p>
+    <button type="submit">Usuń</button>
+    <a href="{% url 'electricity_cost:lista_faktur' %}">Anuluj</a>
+</form>

@@ -54,7 +54,7 @@ def find_wrond_energy_meters_reading(data_from_form, year: int, month: int) -> [
     if previous_data is not None:
         compared_data, good_data = compare_data(data_from_form, previous_data, 'Dane z bieżącego okresu',
                                                 'Dane z poprzedniego okresu')
-        filtered_compared_data = compared_data.loc[(compared_data['różnica'] < 0) | (compared_data['różnica'] > 1000)]
+        filtered_compared_data = compared_data.loc[(compared_data['różnica'] < 0)]
         if len(filtered_compared_data) > 0:
             error_massage = 'wrong_insert_data'
     else:
@@ -82,7 +82,7 @@ def compare_data(data_current, data_previous, label_cuurent_data, label_prevoius
 
     if len(data_previous_df) > 0:
         check_previous_data = pd.merge(data_previous_df, energy_meters, how='left', left_on='energy_meter_id',
-                                       right_index=True)
+                                       right_on='id')
         filtered_data_previous = check_previous_data[['name', 'meter_reading']]
 
         # tworzed df z porownaniem danych biezacych i poprzednich

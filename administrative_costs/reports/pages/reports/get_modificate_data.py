@@ -35,24 +35,58 @@ class CompareDataFromUsageAndInvoices:
     """Zadaniem klasy jest porownanie danych z odczytow licznikow a nastepnie porownanie ich z danymi z faktur.
     W kolejnym kroku dochodzi do wyliczenia tzw straty i rodzielenia procentowo jej."""
 
-    def __init__(self):
-        pass
+    def __init__(self, data_usage, data_invoices):
+        self.data_usage = data_usage
+        self.data_usage_cumulative = pd.DataFrame()
+        self.data_invoices = data_invoices
 
-    @staticmethod
-    def sum_data_by_company(data) -> pd.DataFrame:
+    def sum_data_by_company(self):
         """Zadaniem metody jest swtorznie nowego dataframe ktory polaczy wszystkie zuzycia danje instytuacji
         z wielu licznikow w jedna wartosc"""
-        uniq_years = data['rok'].drop_duplicates().to_list()
-        uniq_months = data['miesiac'].drop_duplicates().to_list()
+        uniq_years = self.data_usage['rok'].drop_duplicates().to_list()
+        uniq_months = self.data_usage['number_of_month'].drop_duplicates().to_list()
         columns_to_sum = ['usage_cob', 'usage_institute', 'usage_museum', 'usage_parish', 'usage']
 
-        temp_df_sum = pd.DataFrame()
         for year in uniq_years:
             for month in uniq_months:
-                temp_in_for = data[columns_to_sum].loc[(data['miesiac'] == month) & (data['rok'] == year)]
+                temp_in_for = self.data_usage[columns_to_sum].loc[
+                    (self.data_usage['number_of_month'] == month) & (self.data_usage['rok'] == year)]
                 temp_in_for = temp_in_for.cumsum()
                 temp_in_for['rok'] = year
-                temp_in_for['miesiac'] = month
+                temp_in_for['number_of_month'] = month
                 if len(temp_in_for) > 1:
-                    temp_df_sum = pd.concat([temp_df_sum, temp_in_for.iloc[[-1]]], ignore_index=True)
-        return temp_df_sum
+                    self.data_usage_cumulative = pd.concat([self.data_usage_cumulative, temp_in_for.iloc[[-1]]],
+                                                           ignore_index=True)
+
+    def compare_data_usage_invoices(self) -> pd.DataFrame:
+        """zadaniem metody jest porownanie danych z licznika z danymi z faktur. Porownujemy ilosc zuzytych jednostyek
+        energii"""
+        data_invoices_filtered = self.data_invoices[['numbers_kwh', 'number_of_month', 'rok']].loc[
+            self.data_invoices['typ_faktury'] == 'za energie']
+        data_all = pd.merge(self.data_usage_cumulative, data_invoices_filtered, how='left',
+                            left_on=['rok', 'number_of_month'], right_on=['rok', 'number_of_month'])
+        data_all['difference'] = data_all['numbers_kwh'] - (
+                data_all['usage_cob'] + data_all['usage_institute'] + data_all['usage_museum'] +
+                data_all['usage_parish'])
+        data_all['% difference'] = (data_all['difference'] / data_all['usage']) * 100
+        return data_all
+
+    @staticmethod
+    def extra_calculations(data_all):
+        """Metoda oblicza dodatkowe kolumny potrzebne do dalszych raportów, oraz poprawia nazwy na lepiej
+        okreslajace zawartosc kolumny"""
+        data_all.rename(
+            columns={'numbers_kwh': 'numbers_kwh_from_invoices', 'usage': 'numbers_kwh_from_meter_readings'},
+            inplace=True)
+        data_all['%_of_usage_for_cob'] = (data_all['usage_cob'] / data_all['numbers_kwh_from_meter_readings']) * 100
+        data_all['%_of_usage_for_institute'] = (data_all['usage_institute'] / data_all[
+            'numbers_kwh_from_meter_readings']) * 100
+        data_all['%_of_usage_for_museum'] = (data_all['usage_museum'] / data_all[
+            'numbers_kwh_from_meter_readings']) * 100
+        data_all['%_of_usage_for_parish'] = (data_all['usage_parish'] / data_all[
+            'numbers_kwh_from_meter_readings']) * 100
+        data_all['difference_for_cob'] = (data_all['%_of_usage_for_cob'] / 100) * data_all['difference']
+        data_all['difference_for_institute'] = (data_all['%_of_usage_for_institute'] / 100) * data_all['difference']
+        data_all['difference_for_museum'] = (data_all['%_of_usage_for_museum'] / 100) * data_all['difference']
+        data_all['difference_for_parish'] = (data_all['%_of_usage_for_parish'] / 100) * data_all['difference']
+        return data_all

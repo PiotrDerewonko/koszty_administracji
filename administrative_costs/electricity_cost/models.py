@@ -17,8 +17,6 @@ class Invoices(models.Model):
     def __str__(self):
         return self.invoices_number
 
-    class Meta:
-        unique_together = ['biling_month', 'biling_year', 'type_of_invoice']
 
 
 class EnergySuppliers(models.Model):

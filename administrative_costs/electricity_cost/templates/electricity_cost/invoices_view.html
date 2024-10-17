@@ -24,6 +24,7 @@
                         
                         
                         
+                        
                         {% else %}{% if sort == '-invoices_number' %}sort=-id{% else %}sort=invoices_number{% endif %}{% endif %}">Numer
                         faktury</a></th>
                 <th><a href="?{% if sort == 'cost' %}sort=-cost
@@ -38,12 +39,14 @@
                     
                     
                     
+                    
                     {% else %}{% if sort == '-energysuppliers' %}sort=-id{% else %}sort=energysuppliers{% endif %}{% endif %}">Dostawca</a>
                 </th>
                 <th>
                     <a href="?{% if sort == 'biling_month__number_of_month' %}sort=-biling_month__number_of_month
 
 
+                        
                         
                         
                         
@@ -56,6 +59,7 @@
                     Rozrachunkowy</a>
                 </th>
                 <th><a href="?{% if sort == 'type_of_invoice' %}sort=-type_of_invoice
+                    
                     
                     
                     
@@ -79,7 +83,8 @@
                     <td>{{ obj.biling_month }}</td>
                     <td>{{ obj.biling_year }}</td>
                     <td>{{ obj.type_of_invoice }}</td>
-                    <td><a href="{% url 'electricity_cost:edycja_faktury' pk=obj.id %}">Edycja</a></td>
+                    <td><a href="{% url 'electricity_cost:edycja_faktury' pk=obj.id %}">Edycja</a>
+                        <a href="{% url 'electricity_cost:usuwanie_faktury' pk=obj.id %}">Usuń fakturę</a></td>
                 </tr>
             {% endfor %}
             </tbody>
