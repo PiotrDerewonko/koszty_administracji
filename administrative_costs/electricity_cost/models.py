@@ -13,6 +13,7 @@ class Invoices(models.Model):
     biling_month = models.ForeignKey('Month', verbose_name='Miesiąc rozliczeniowy', on_delete=models.PROTECT)
     biling_year = models.ForeignKey('Year', verbose_name='Rok rozliczeniowy', on_delete=models.PROTECT)
     type_of_invoice = models.ForeignKey('TypeOfInvoice', on_delete=models.PROTECT, verbose_name='Typ faktury')
+    vat_rate = models.ForeignKey('VatRate', on_delete=models.PROTECT, verbose_name='Stawka Vat', default=1)
 
     def __str__(self):
         return self.invoices_number
@@ -55,6 +56,7 @@ class EnergyMeters(models.Model):
     is_add_manual = models.BooleanField(default=False, verbose_name='Licznik dodawany ręcznie')
     conversion_factor = models.FloatField(verbose_name='Przelicznik', default=1.00)
     is_virtual = models.BooleanField(verbose_name='Czy wirtualny', default=False)
+    initial_value = models.FloatField(verbose_name='Wartość początkowa', default=0)
 
     def clean(self):
 
@@ -183,3 +185,10 @@ class MeterReadingsList(models.Model):
 
     def __str__(self):
         return f'Odczyt za rok: {self.biling_year} oraz miesiac {self.biling_month}'
+
+class VatRate(models.Model):
+    """Model który przechowuje wysokości stawek VAT."""
+    name = models.IntegerField(verbose_name='Stawka vat')
+
+    def __str__(self):
+        return f'{self.name} %'

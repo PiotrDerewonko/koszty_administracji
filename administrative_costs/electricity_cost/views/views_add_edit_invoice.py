@@ -10,7 +10,7 @@ class InvoicesAddInvoiceView(CreateView):
     model = Invoices
     template_name = 'electricity_cost/add_invoice.html'
     fields = ['invoices_number', 'cost', 'numbers_mwh', 'energysuppliers', 'biling_month', 'biling_year',
-              'type_of_invoice']
+              'type_of_invoice', 'vat_rate']
     success_url = reverse_lazy('electricity_cost:lista_faktur')
 
     def form_valid(self, form):
@@ -31,7 +31,7 @@ class EditInvoiceView(UpdateView):
     model = Invoices
     template_name = 'electricity_cost/add_invoice.html'
     fields = ['invoices_number', 'cost', 'numbers_mwh', 'energysuppliers', 'biling_month', 'biling_year',
-              'type_of_invoice']
+              'type_of_invoice', 'vat_rate']
     success_url = reverse_lazy('electricity_cost:lista_faktur')
 
     def form_valid(self, form):

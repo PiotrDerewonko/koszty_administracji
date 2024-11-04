@@ -23,11 +23,23 @@ class PrepareDataForPivotTable:
         data = pd.read_sql_query(zapytanie, conn)
         return data
 
-    def filter_data(self, data) -> pd.DataFrame:
+    def filter_main_energy_meters(self, data) -> pd.DataFrame:
         """Funkcja odfiltrowuje jedynie liczniki glownych poszczegolnych stref."""
         # wybrane liczniki, ktore swoim zasiegiem obejmuja wszystkie podmioty
 
         data_to_return = data.loc[data['id_licznika'].isin(self.id_energy_meters)]
+        return data_to_return
+
+    @staticmethod
+    def filter_data_by_years_and_months(data, years: list, month: list) -> pd.DataFrame:
+        """Metoda odfitrowuje dane na podstawie rok i miesiąca wybranych przez użytkownikow."""
+        data_to_return = data.loc[(data['number_of_month']>= month[0]) & (data['number_of_month']<= month[1])]
+        if isinstance(years, int):
+            years = [years]
+        data_to_return['rok'] = data_to_return['rok'].astype(int)
+        data_to_return = data_to_return.loc[data_to_return['rok'].isin(years)]
+        data_to_return['rok'] = data_to_return['rok'].astype(str)
+
         return data_to_return
 
 

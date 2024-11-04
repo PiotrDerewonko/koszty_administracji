@@ -20,7 +20,6 @@ def add_energy_consumption(year: int, month: int) -> None:
     mrl_id = mrl_pk[0].id
     energy_meters_query = EnergyMeters.objects.select_related('museum_share', 'cob_share', 'parish_share',
                                                               'institute_share')
-    #todo dodac tutaj odczyt poczatkowy licznika i odejmowac go od obu wartosci
     data = []
     for meter in energy_meters_query:
         data.append({
@@ -29,7 +28,8 @@ def add_energy_consumption(year: int, month: int) -> None:
             'cob_share': meter.cob_share.value,
             'parish_share': meter.parish_share.value,
             'institute_share': meter.institute_share.value,
-            'conversion_factor': meter.conversion_factor
+            'conversion_factor': meter.conversion_factor,
+            'initial_value': meter.initial_value
         })
 
     # Tworzenie DataFrame
@@ -47,8 +47,12 @@ def add_energy_consumption(year: int, month: int) -> None:
         compared_data['difference'] = compared_data['meter_reading_current'] - compared_data['meter_reading_previous']
         data_to_save = compared_data[['energy_meter_id', 'difference']]
     else:
-        data_to_save = data_current_df[['energy_meter_id', 'meter_reading']]
-        data_to_save = data_to_save.rename(columns={'meter_reading': 'difference'})
+        # ten przypadek wystepi tylko przy pierwszym wpisywaniu danych
+        data_current_df = data_current_df[['energy_meter_id', 'meter_reading']]
+        compared_data = pd.merge(data_current_df, energy_meters, how='left', left_on='energy_meter_id', right_on='id')
+        compared_data['meter_reading'] = compared_data['meter_reading'] - compared_data['initial_value']
+        compared_data = compared_data.rename(columns={'meter_reading': 'difference'})
+        data_to_save = compared_data[['energy_meter_id', 'difference']]
     # dodaje przeliczniki dla kazdego licznika i przeliczam ile wyniosla dla kazdej instytucji zuzycie
     data_to_save = pd.merge(data_to_save, energy_meters[
         ['id', 'museum_share', 'cob_share', 'parish_share', 'institute_share', 'conversion_factor']], how='left',
@@ -87,7 +91,7 @@ def add_virtual_energy_consumption(data, mrl_id) -> pd.DataFrame:
                 data_tmp_submain['usage_cob'] = data['usage_cob'].loc[data['energy_meter_id'] == sub_id].iloc[0]
                 data_tmp_submain['usage_parish'] = data['usage_parish'].loc[data['energy_meter_id'] == sub_id].iloc[0]
                 data_tmp_submain['usage_institute'] = \
-                data['usage_institute'].loc[data['energy_meter_id'] == sub_id].iloc[0]
+                    data['usage_institute'].loc[data['energy_meter_id'] == sub_id].iloc[0]
                 data_tmp = pd.concat([data_tmp, data_tmp_submain], ignore_index=True)
             except IndexError:
                 print(f'Nie ma danych podlicznikow dla licznika o id {sub_id}')

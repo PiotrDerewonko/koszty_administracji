@@ -25,6 +25,9 @@
                         
                         
                         
+                        
+                        
+                        
                         {% else %}{% if sort == '-invoices_number' %}sort=-id{% else %}sort=invoices_number{% endif %}{% endif %}">Numer
                         faktury</a></th>
                 <th><a href="?{% if sort == 'cost' %}sort=-cost
@@ -32,24 +35,16 @@
                 <th><a href="?{% if sort == 'numbers_mwh' %}sort=-numbers_mwh
                     {% else %}{% if sort == '-numbers_mwh' %}sort=-id{% else %}sort=numbers_mwh{% endif %}{% endif %}">Ilość
                     MwH</a></th>
+                <th><a href="?{% if sort == 'vat_rate' %}sort=-vat_rate
+                    {% else %}{% if sort == '-vat_rate' %}sort=-id{% else %}sort=vat_rate{% endif %}{% endif %}">Stawka
+                    VAT</a></th>
                 <th><a href="?{% if sort == 'energysuppliers' %}sort=-energysuppliers
 
-
-                    
-                    
-                    
-                    
-                    
                     {% else %}{% if sort == '-energysuppliers' %}sort=-id{% else %}sort=energysuppliers{% endif %}{% endif %}">Dostawca</a>
                 </th>
                 <th>
                     <a href="?{% if sort == 'biling_month__number_of_month' %}sort=-biling_month__number_of_month
 
-
-                        
-                        
-                        
-                        
                         
                         {% else %}{% if sort == '-biling_month__number_of_month' %}sort=-id{% else %}sort=biling_month__number_of_month{% endif %}{% endif %}">Miesiąc
                         Rozrachunkowy</a>
@@ -59,11 +54,7 @@
                     Rozrachunkowy</a>
                 </th>
                 <th><a href="?{% if sort == 'type_of_invoice' %}sort=-type_of_invoice
-                    
-                    
-                    
-                    
-                    
+                   
                     {% else %}{% if sort == '-type_of_invoice' %}sort=-id{% else %}sort=type_of_invoice{% endif %}{% endif %}">Typ
                     Faktury</a>
                 </th>
@@ -79,6 +70,7 @@
                     <td>{{ obj.invoices_number }}</td>
                     <td>{{ obj.cost }} zł</td>
                     <td>{{ obj.numbers_mwh }}</td>
+                    <td>{{ obj.vat_rate }}</td>
                     <td>{{ obj.energysuppliers }}</td>
                     <td>{{ obj.biling_month }}</td>
                     <td>{{ obj.biling_year }}</td>

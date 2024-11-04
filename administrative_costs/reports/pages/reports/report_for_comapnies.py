@@ -4,12 +4,14 @@ from pages.reports.columns_for_table import AddColumnsToTable
 
 
 class ReportForCompanies:
-    def __init__(self, data_calculations, data_from_invoices, company):
+    def __init__(self, data_calculations, data_from_invoices, company, company_to_table):
         self.data_calculations = data_calculations
         self.data_from_invoices = data_from_invoices
         self.company = company
         self.data_filltered = None
         self.final_table = None
+        self.company_to_table = company_to_table
+        self.adnotation = '<br><br>'
 
     def choose_data(self) -> None:
         """Metoda odfiltowuje jedynie te kolumnym,ktore dotycza danej firmy (przekazanej w init)"""
@@ -28,10 +30,11 @@ class ReportForCompanies:
 
         columns_from_data_invoices_tmp = data_invoices_tmp.columns.tolist()
 
+        #petla dodajaca suffix, wykorzystywane dalej do wszystkich wylczen
         for i in columns_from_data_invoices_tmp:
             data_invoices_tmp = data_invoices_tmp.rename(columns={f'{i}': f'{i}_{type_of_invoice}'})
         self.data_filltered = pd.merge(self.data_filltered, data_invoices_tmp, left_index=True, right_index=True,
-                                       how='left')
+                                       how='left').fillna(0)
         self.data_filltered = self.data_filltered.reset_index()
 
     def create_pivot_table(self) -> None:
@@ -41,22 +44,43 @@ class ReportForCompanies:
         self.final_table['rok'] = self.data_filltered['rok']
         self.final_table['numer miesiąca'] = self.data_filltered['number_of_month']
 
-        add_columns_to_table = AddColumnsToTable(self.final_table, self.data_filltered, self.company)
+        add_columns_to_table = AddColumnsToTable(self.final_table, self.data_filltered, self.company, self.company_to_table)
 
-        ############################## wartosc netto faktury za energie###############################
-        self.final_table = add_columns_to_table.add_invoice_for_energy()
-#
-        ############################## wartosc netto faktury za przesyl###############################
-        self.final_table = add_columns_to_table.add_invoice_for_distribution_energy()
-#
-#         ############################## wartosc straty w zl###############################
-        self.final_table = add_columns_to_table.add_value_of_diffrences()
-#
-#         ############################## wartosc zuzytej energi przez firme###############################
-        self.final_table = add_columns_to_table.add_value_of_usage_energy_for_comapny()
+        # wartosc brutto faktury za energie
+        self.final_table, self.adnotation = add_columns_to_table.add_invoice_for_energy(self.adnotation)
 
-#         ############################## wartosc oplaty przesylowej dla firmy###############################
-        self.final_table = add_columns_to_table.add_value_of_delivered_energy()
+        # wartosc brutto faktury za przesyl
+        self.final_table, self.adnotation = add_columns_to_table.add_invoice_for_distribution_energy(self.adnotation)
+
+        # koszt za 1 kwh
+        self.final_table, self.adnotation = add_columns_to_table.add_value_of_cost_per_1_kwh(self.adnotation)
+
+        # ilosc kwh z licznikow
+        self.final_table, self.adnotation = add_columns_to_table.add_total_usege_from_meter_readings(self.adnotation)
+
+        # ilosc kwh z faktury
+        self.final_table, self.adnotation = add_columns_to_table.add_total_usege_from_invoices(self.adnotation)
+
+        # ilosc straty
+        self.final_table, self.adnotation = add_columns_to_table.add_difference(self.adnotation)
+
+        # ilosc energii dla firmy
+        self.final_table, self.adnotation = add_columns_to_table.usage_energy_for_company(self.adnotation)
+
+        # wartosc % zuzycia energi dla firmy
+        self.final_table, self.adnotation = add_columns_to_table.add_percent_of_usage_energy_for_company(self.adnotation)
+
+        # wykosc straty dla firmy
+        self.final_table, self.adnotation = add_columns_to_table.add_value_of_difference_for_company(self.adnotation)
+
+        #total energi dla firmy
+        self.final_table, self.adnotation = add_columns_to_table.add_total_usage_energy_with_diffrenace(self.adnotation)
+
+        # total koszt
+        self.final_table, self.adnotation = add_columns_to_table.total_cost_for_company(self.adnotation)
+
+        # dodaje wysokosc stawki vat
+        self.final_table = add_columns_to_table.add_vat_rate()
 
         # na sam koniec ustawiam rok i miesiac jako index
         self.final_table = self.final_table.set_index(['rok', 'numer miesiąca'])
