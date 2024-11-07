@@ -19,7 +19,6 @@ class Invoices(models.Model):
         return self.invoices_number
 
 
-
 class EnergySuppliers(models.Model):
     name = models.CharField(max_length=250)
 
@@ -186,9 +185,19 @@ class MeterReadingsList(models.Model):
     def __str__(self):
         return f'Odczyt za rok: {self.biling_year} oraz miesiac {self.biling_month}'
 
+
 class VatRate(models.Model):
     """Model który przechowuje wysokości stawek VAT."""
     name = models.IntegerField(verbose_name='Stawka vat')
 
     def __str__(self):
         return f'{self.name} %'
+
+
+class MeterReadingHistory(models.Model):
+    """Model który przechowuje historie zmian dokonane przez uztkownika w zakresie odczytow licznika"""
+    energy_meter = models.FloatField(verbose_name='Licznik')
+    meter_reading = models.FloatField(verbose_name='Odczyt licznika')
+    reading_name = models.FloatField(verbose_name='Lista licznika')
+    user = models.CharField(verbose_name='Nazwa użytkownika')
+    data_of_changed = models.DateField(verbose_name='Data zmiany')

@@ -1,8 +1,8 @@
 import pandas as pd
-from ..models import EnergyMeters, MeterReading, MeterReadingsList
+from ..models import EnergyMeters, MeterReading, MeterReadingsList, MeterReadingHistory
 from .find_previous_period import find_previous_period, find_period_data
 import json
-from django.utils.datastructures import MultiValueDictKeyError
+from datetime import datetime
 from typing import Dict
 
 
@@ -64,7 +64,7 @@ def find_wrond_energy_meters_reading(data_from_form, year: int, month: int) -> [
     return filtered_compared_data, error_massage, good_data
 
 
-def compare_data(data_current, data_previous, label_cuurent_data, label_prevoius_data) -> pd.DataFrame:
+def compare_data(data_current, data_previous, label_cuurent_data, label_prevoius_data) -> tuple[pd.DataFrame, pd.DataFrame]:
     """funkcja ktorej zadaniem jest porownanie danych z biezacego okresu, z danymi za okres poprzedni.
     Na pocztaku tworeze slownik dla df ze wszystkimi wartosciami z POST, nastepnie pobieram wartosci ze slwonika
     licnzikow i zostawiam sama wartosci licznikow a na koncu porownuje dane z biezace i dane poprzednie """
@@ -100,7 +100,7 @@ def compare_data(data_current, data_previous, label_cuurent_data, label_prevoius
     return data_diffrent, good_data_current
 
 
-def save_data_meter_readings(data, key) -> None:
+def save_data_meter_readings(data, key, current_user) -> None:
     """Funkcja zapisuje dane przekazane w formualrzu do taberli z odczytami licznikow. Dane tu zawarte, to
     wylacznie odczyty licznikow bez dat i okresow rozliczeniowych."""
     data_to_save = filtr_only_energy_meters_from_request(data)
@@ -115,6 +115,13 @@ def save_data_meter_readings(data, key) -> None:
             meter_reading=item['meter_reading'],
             energy_meter_id=item['energy_meter_id'],
             reading_name_id=item['reading_name_id']
+        )
+        MeterReadingHistory.objects.create(
+            meter_reading=item['meter_reading'],
+            energy_meter=item['energy_meter_id'],
+            reading_name=item['reading_name_id'],
+            data_of_changed=datetime.now(),
+            user=current_user
         )
 
 

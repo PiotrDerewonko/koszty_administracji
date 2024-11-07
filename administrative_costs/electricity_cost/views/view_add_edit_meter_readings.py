@@ -1,5 +1,3 @@
-from validators import ValidationError
-
 from ..models import EnergyMeters
 from django.contrib.auth.decorators import login_required
 from ..forms import get_energy_meter_form
@@ -55,7 +53,7 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
         form = energymeterform(request.POST)
         # to jest przypadek dla post gdzie jest on przesylany pierwszy raz
         if error_message == 'true':
-            save_data_meter_readings(energymeterform, pk)
+            save_data_meter_readings(energymeterform, pk, request.user)
         else:
             if form.is_valid():
                 month = request.POST.get('month')
@@ -93,7 +91,7 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
                                        'data_diffrent': data_diffrent.to_html(index=False),
                                        'komunikat': 'Dane sa podejrzane'})
                     else:
-                        save_data_meter_readings(request, pk_mrl)
+                        save_data_meter_readings(request, pk_mrl, request.user)
                         add_energy_consumption(int(year), int(month))
                         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
     elif request.method != 'POST' and pk is not None:
@@ -106,7 +104,7 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
         # to jest przypadek gdzie przeslany jest post oraz zostal zaakceptowanyny dodatkowy formularz
         delete_data(original_form_pk, manualy)
         year, month = find_month_year(original_form_pk)
-        save_data_meter_readings(original_form_data, original_form_pk)
+        save_data_meter_readings(original_form_data, original_form_pk, request.user)
         add_energy_consumption(year, month)
         change_data_in_meter_reading_list(original_form_pk, original_form_date, original_form_image)
         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))
@@ -114,7 +112,7 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
         # todo do wymyslenia jak polaczyc to z pierwsza opjca w tym widoku
         # to jest przypadek przeslanyh wydetywanych danych
         delete_data(pk, manualy)
-        save_data_meter_readings(request, pk)
+        save_data_meter_readings(request, pk, request.user)
         year, month = find_month_year(pk)
         add_energy_consumption(year, month)
         try:
