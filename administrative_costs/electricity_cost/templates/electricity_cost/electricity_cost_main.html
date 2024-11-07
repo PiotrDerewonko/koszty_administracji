@@ -4,13 +4,15 @@
     <nav>
         <ul class="nav bg-info">
             <li class="nav-item"><a class='nav-link link-light' {% if active_tab == 'invoices_list' %}  {% endif %}
-                                                          href="{% url 'electricity_cost:lista_faktur' %}">Lista
+                                    href="{% url 'electricity_cost:lista_faktur' %}">Lista
                 faktur</a>
             </li>
             <li class="nav-item"><a class='nav-link link-light' {% if active_tab == 'readings_list' %}  {% endif %}
-                                                          href="{% url 'electricity_cost:lista_odczytów' %}">Lista
+                                    href="{% url 'electricity_cost:lista_odczytów' %}">Lista
                 odczytów</a>
             </li>
+            <li class="nav-item"><a class='nav-link link-light' {% if active_tab == 'reports' %}  {% endif %}
+                                    href="{% url 'electricity_cost:reports' %}">Raporty</a></li>
 
 
             <li class="nav-item">{% if user.is_authenticated %}

@@ -167,4 +167,7 @@ administrative_costs/media/
 media/
 /media/
 administrative_costs/electricity_cost/reports/connections/*
-reports/pages/reports/pdf_files
+reports/pages/reports/pdf_files/*
+administrative_costs/db.json
+db.json
+reports/pages/reports/pdf_files/
