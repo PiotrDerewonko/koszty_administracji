@@ -2,7 +2,7 @@ import pandas as pd
 import locale
 
 # Ustawienie lokalizacji na polski
-# locale.setlocale(locale.LC_ALL, 'pl_PL.UTF-8')
+locale.setlocale(locale.LC_ALL, 'pl_PL.UTF-8')
 
 
 class AddColumnsToTable:

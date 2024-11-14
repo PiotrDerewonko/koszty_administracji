@@ -1,25 +1,27 @@
 services:
-#  django:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    ports:
-#      - "11301:8000"
-#    environment:
-#      - DATABASE_NAME=${NAME}
-#      - DATABASE_USER=${USER}
-#      - DATABASE_PASSWORD=${PASSWORD}
-#      - DATABASE_HOST=${HOST}
-#      - DB_PORT=${PORT}
-#    depends_on:
-#      - db
-#    volumes:
-#      - ./data:/app/data
-#    networks:
-#      - app_network  # Używamy zdefiniowanej sieci
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    ports:
+      - "11301:8000"
+    environment:
+      - DATABASE_NAME=${POSTGRES_DB}
+      - DATABASE_USER=${POSTGRES_USER}
+      - DATABASE_PASSWORD=${POSTGRES_PASSWORD}
+      - DATABASE_HOST=${HOST}
+      - DB_PORT=${PORT}
+    depends_on:
+      - db
+    volumes:
+      - ./data:/app/data
+    networks:
+      - app_network  # Używamy zdefiniowanej sieci
 
   db:
     image: postgres:latest
+    platform: linux/amd64
     env_file:
       - .env
     ports:
@@ -34,12 +36,15 @@ services:
     build:
       context: .  # Ustaw kontekst na katalog główny
       dockerfile: ./Dockerfile  # Dockerfile pozostaje w katalogu głównym
+    platform: linux/amd64
     env_file:  # Dodaj plik `.env` także dla aplikacji `Streamlit`
       - .env
     ports:
       - "11302:8501"
     depends_on:
       - db
+    volumes:
+      - media_data:/app/media
     networks:
       - app_network
 
@@ -49,4 +54,5 @@ networks:
     driver: bridge  # Określamy, że sieć ma być typu bridge
 
 volumes:
-  pgdata:  # Definicja wolumenu
+  pgdata:  # Definicja wolumenu bazy danych
+  media_data: # Definicja wolumenu plikow
