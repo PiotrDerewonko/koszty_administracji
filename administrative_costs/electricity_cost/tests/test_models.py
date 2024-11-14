@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ..models import EnergyMeters, MeterShares, MeterLocations, Month, Year, Invoices, EnergySuppliers, TypeOfInvoice
+from ..models import EnergyMeters, MeterShares, MeterLocations, Month, Year, Invoices, EnergySuppliers, TypeOfInvoice, VatRate
 from django.core.exceptions import ValidationError
 
 
@@ -37,11 +37,12 @@ class InvoicesTest(TestCase):
         Year.objects.create(name=2024)
         EnergySuppliers.objects.create(name='PGE')
         TypeOfInvoice.objects.create(name='test')
+        VatRate.objects.create(name=23)
 
     def setUp(self):
         Invoices.objects.create(invoices_number='Testowa Faktura', cost=1, cost_per_1_mwh=1, numbers_mwh=1,
                                 energysuppliers_id=1,
-                                biling_month_id=1, biling_year_id=1, type_of_invoice_id=1)
+                                biling_month_id=1, biling_year_id=1, type_of_invoice_id=1, vat_rate_id=1)
 
     def test_create_invoice(self):
         i1 = Invoices.objects.get(pk=1)

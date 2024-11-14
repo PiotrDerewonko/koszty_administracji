@@ -1,8 +1,9 @@
 from decouple import config
 import sqlalchemy as db
+import streamlit as st
 
 def connect_to_databse():
-    database = config('NAME')
+    database = config('DATABASE')
     user = config('USER')
     password = config('PASSWORD')
     host= config('HOST')

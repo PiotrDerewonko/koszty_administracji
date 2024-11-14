@@ -4,6 +4,9 @@ from pages.reports.report_for_comapnies import ReportForCompanies
 from pages.reports.generate_pdf_file import GeneratePdfFile
 from datetime import datetime
 
+# Reszta logiki aplikacji
+
+
 with st.container(border=True):
     st.markdown('Raport z użycie poszczególnych instytucji')
 

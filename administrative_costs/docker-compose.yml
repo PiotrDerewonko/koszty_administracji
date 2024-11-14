@@ -1,0 +1,52 @@
+services:
+#  django:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - "11301:8000"
+#    environment:
+#      - DATABASE_NAME=${NAME}
+#      - DATABASE_USER=${USER}
+#      - DATABASE_PASSWORD=${PASSWORD}
+#      - DATABASE_HOST=${HOST}
+#      - DB_PORT=${PORT}
+#    depends_on:
+#      - db
+#    volumes:
+#      - ./data:/app/data
+#    networks:
+#      - app_network  # Używamy zdefiniowanej sieci
+
+  db:
+    image: postgres:latest
+    env_file:
+      - .env
+    ports:
+      - "11300:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+#      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    networks:
+      - app_network  # Używamy tej samej sieci
+
+  streamlit:
+    build:
+      context: .  # Ustaw kontekst na katalog główny
+      dockerfile: ./Dockerfile  # Dockerfile pozostaje w katalogu głównym
+    env_file:  # Dodaj plik `.env` także dla aplikacji `Streamlit`
+      - .env
+    ports:
+      - "11302:8501"
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+
+networks:
+  app_network:
+    driver: bridge  # Określamy, że sieć ma być typu bridge
+
+volumes:
+  pgdata:  # Definicja wolumenu
