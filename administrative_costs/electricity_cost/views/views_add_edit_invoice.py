@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from ..models import Invoices
@@ -33,6 +34,13 @@ class EditInvoiceView(UpdateView):
     fields = ['invoices_number', 'cost', 'numbers_mwh', 'energysuppliers', 'biling_month', 'biling_year',
               'type_of_invoice', 'vat_rate']
     success_url = reverse_lazy('electricity_cost:lista_faktur')
+
+    def dispatch(self, request, *args, **kwargs):
+        # Sprawdzamy, czy użytkownik ma uprawnienia do edytowania faktur
+        if not request.user.has_perm('electricity_cost.edit_invoice'):  # Możesz dodać inne warunki, np. sprawdzenie uprawnień
+            # Jeśli użytkownik nie ma uprawnień, przekierowujemy go na stronę z komunikatem
+            return render(request,'electricity_cost/brak_uprawnien.html')  # Zastąp odpowiednią stroną/ścieżką
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         # Pobieramy wartości z formularza

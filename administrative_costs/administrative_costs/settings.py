@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+
+
 from decouple import config
 import os
 
@@ -26,7 +28,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.2.202', '192.168.2.110']
+ALLOWED_HOSTS = ['192.168.2.202', '192.168.2.110', 'localhost']
 
 # Application definition
 
@@ -74,11 +76,11 @@ WSGI_APPLICATION = "administrative_costs.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME', 'default_db_name'),
-        'USER': os.getenv('DATABASE_USER', 'default_user'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'default_password'),
-        'HOST': os.getenv('DATABASE_HOST', 'db'),
-        'PORT': int(os.getenv('DB_PORT', 5432)),
+        'NAME': config('POSTGRES_DB', 'default_db_name'),
+        'USER': config('POSTGRES_USER', 'default_user'),
+        'PASSWORD': config('POSTGRES_PASSWORD', 'default_password'),
+        'HOST': config('DATABASE_HOST', 'localhost'),
+        'PORT': int(config('DB_PORT', 11265)),
     }
 }
 

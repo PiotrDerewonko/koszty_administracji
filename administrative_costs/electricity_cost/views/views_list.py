@@ -26,9 +26,11 @@ class ViewListMain(ListView):
         """
         pobiera parametr sort
         """
+        has_permission = self.request.user.has_perm(f'electricity_cost.{self.model}')
         context = super().get_context_data(**kwargs)
         sort_param = self.request.GET.get('sort', 'cost')
         context['sort'] = sort_param
+        context['has_permission'] = has_permission
         return context
 
 
