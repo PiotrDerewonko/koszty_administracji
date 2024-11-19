@@ -16,6 +16,8 @@ services:
       - db
     volumes:
       - ./data:/app/data
+      - ./static:/app/static
+      - media_data:/app/media
     networks:
       - app_network  # Używamy zdefiniowanej sieci
 
@@ -43,8 +45,6 @@ services:
       - "11302:8501"
     depends_on:
       - db
-    volumes:
-      - media_data:/app/media
     networks:
       - app_network
 

@@ -17,7 +17,7 @@ def add_metere_readings_from_xlsx(request):
         year = request.POST.get('year')
         file = request.FILES.get('file_with_meter_readings')
         pk = add_meter_reading_automatic(month, year, file)
-        data_from_xlx(file, pk)
+        data_from_xlx(file, pk, request.user)
         delete_energy_consumption(int(year), int(month))
         add_energy_consumption(int(year), int(month))
         return redirect(reverse_lazy('electricity_cost:lista_odczytów'))

@@ -3,7 +3,7 @@ from pages.reports.get_modificate_data import PrepareDataForPivotTable, CompareD
 from pages.reports.report_for_comapnies import ReportForCompanies
 from pages.reports.generate_pdf_file import GeneratePdfFile
 from datetime import datetime
-
+from pages.reports.time_period import add_time_period
 # Reszta logiki aplikacji
 
 
@@ -16,10 +16,14 @@ with st.container(border=True):
     month_range = list(map(lambda x: x, range(1, 13)))
 
     # wskazuje zakres czasu za jaki ma być wygenerowany raport
-    year_to_report = st.select_slider(options=years_range, value=(years_range[0]),
+    year_to_report = st.select_slider(options=years_range, value=(years_range[0], years_range[0]),
                                       label='Wybierz zakres lat do raportu')
     month_to_report = st.select_slider(options=month_range, value=(month_range[0], month_range[-1]),
                                        label='Wybierz zakres miesięcy do raportu')
+
+    #tworze podtytul
+    subtitle = add_time_period(month_to_report, year_to_report)
+    st.markdown(subtitle, unsafe_allow_html=True)
 
     # pobieram i fitlruje dane na temat odczytow, filtruje tylko po glownych licznikach objektow
     dataForPivotUsage = PrepareDataForPivotTable()
@@ -55,7 +59,7 @@ with st.container(border=True):
             table_in_html = report.final_table.to_html(classes='table table-bordered', escape=False)
             st.markdown(table_in_html.replace('<table', '<table style="font-size: 13px;"'), unsafe_allow_html=True)
             st.markdown(report.adnotation, unsafe_allow_html=True)
-            pdf_file = GeneratePdfFile(table_in_html, report.adnotation, f'Raport dla {name} za okres', name)
+            pdf_file = GeneratePdfFile(table_in_html, report.adnotation, f'Raport dla {name} {subtitle}', name)
             pdf_file.create_pdf()
             with open(f"./pages/reports/pdf_files/{name}.pdf", "rb") as file:
                 btn = st.download_button(

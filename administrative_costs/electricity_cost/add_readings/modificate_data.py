@@ -181,7 +181,7 @@ def chack_data_from_xlsx(data, pk) -> pd.DataFrame:
     return diffrent
 
 
-def data_from_xlx(data, pk) -> str:
+def data_from_xlx(data, pk, user) -> str:
     """Funckja ddczytuje dane z xlsx i zapisuje je w bazie danych, a nastepnie sprawdza, czy wszystkie przeslane dane
     zostaly zaimportowane do bazy danych"""
     xlsx_data = pd.read_excel(data)
@@ -189,6 +189,6 @@ def data_from_xlx(data, pk) -> str:
     good_data_current = good_data_current.drop(good_data_current.index[:10])
     good_data_current.rename(columns={'Unnamed: 1': 'name', 'Unnamed: 10': 'meter_reading'}, inplace=True)
     delete_data(pk, False)
-    save_data_meter_readings(good_data_current, pk)
+    save_data_meter_readings(good_data_current, pk, user)
     not_imported = chack_data_from_xlsx(good_data_current, pk)
     a = 4
