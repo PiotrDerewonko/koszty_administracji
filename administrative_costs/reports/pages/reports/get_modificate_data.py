@@ -33,7 +33,7 @@ class PrepareDataForPivotTable:
     @staticmethod
     def filter_data_by_years_and_months(data, years: list, month: list) -> pd.DataFrame:
         """Metoda odfitrowuje dane na podstawie rok i miesiąca wybranych przez użytkownikow."""
-        data_to_return = data.loc[(data['number_of_month']>= month[0]) & (data['number_of_month']<= month[1])]
+        data_to_return = data.loc[(data['number_of_month'] >= month[0]) & (data['number_of_month'] <= month[1])]
         if isinstance(years, int):
             years = [years]
         data_to_return['rok'] = data_to_return['rok'].astype(int)
@@ -102,3 +102,47 @@ class CompareDataFromUsageAndInvoices:
         data_all['difference_for_museum'] = (data_all['%_of_usage_for_museum'] / 100) * data_all['difference']
         data_all['difference_for_parish'] = (data_all['%_of_usage_for_parish'] / 100) * data_all['difference']
         return data_all
+
+
+class PrepareDataForPivotTableTelecom(PrepareDataForPivotTable):
+    id_energy_meters = [84, 86, 83, 85]
+
+
+class CompareDataFromUsageAndUsageGlobalTelecom(CompareDataFromUsageAndInvoices):
+    def sum_data_by_company(self):
+        """Zadaniem tej metody stworzenie tabeli przestawnej ktora pokaze ile pradu zuzyli poszczegolni
+        operatorzy w roku i miesiącu obrachunkowym"""
+        self.data_usage_cumulative = pd.pivot_table(self.data_usage, index=['rok', 'number_of_month'],
+                                                    columns=['liczniki'],
+                                                    values=['usage'], aggfunc='sum')
+        self.data_usage_cumulative.columns = ['_'.join(col).strip() for col in
+                                              self.data_usage_cumulative.columns.values]
+
+    def compare_data_usage_invoices(self):
+        """Zadanmiem tej metody jest porownanie sumy podlicznikow operator z licznikiem glownym telefonii."""
+        if len(self.data_invoices) <= 12:
+            data_tmp = self.data_invoices.iloc[:, [3, 11, 2, 5]]
+            data_tmp = data_tmp.rename(columns={data_tmp.columns[0]: 'energia_kompleks'})
+            data_tmp = data_tmp.rename(columns={data_tmp.columns[1]: 'vat'})
+            data_tmp = data_tmp.rename(columns={data_tmp.columns[2]: 'koszt_1_kwh'})
+            data_tmp = data_tmp.rename(columns={data_tmp.columns[3]: 'strata'})
+        else:
+            data_tmp = self.data_invoices.iloc[:, [3, 13, 2, 3, 4, 7]]
+            data_tmp = data_tmp.rename(columns={data_tmp.columns[0]: 'energia_kompleks'})
+            data_tmp = data_tmp.rename(columns={data_tmp.columns[1]: 'vat'})
+            data_tmp = data_tmp.rename(columns={data_tmp.columns[2]: 'koszt_1_kwh'})
+            data_tmp = data_tmp.rename(columns={data_tmp.columns[3]: 'koszt_1_kwh_energia'})
+            data_tmp = data_tmp.rename(columns={data_tmp.columns[4]: 'koszt_1_kwh_dystrybucja'})
+            data_tmp = data_tmp.rename(columns={data_tmp.columns[5]: 'strata'})
+        data_tmp = data_tmp.replace(r"kwh|%|zł|VAT|\s", "", regex=True)
+        for col in data_tmp.columns:
+            data_tmp[col] = data_tmp[col].replace(',', '.', regex=True).apply(pd.to_numeric, errors='coerce')
+
+        self.data_usage_cumulative = self.data_usage_cumulative.reset_index()
+        self.data_usage_cumulative = self.data_usage_cumulative.rename(columns={'number_of_month': 'numer miesiąca'})
+        self.data_usage_cumulative = self.data_usage_cumulative.set_index(['rok', 'numer miesiąca'])
+        data_all = pd.merge(self.data_usage_cumulative, data_tmp, how='left', left_index=True,
+                            right_index=True)
+        return data_all
+
+

@@ -1,9 +1,11 @@
 import streamlit as st
-from pages.reports.get_modificate_data import PrepareDataForPivotTable, CompareDataFromUsageAndInvoices
+from pages.reports.get_modificate_data import PrepareDataForPivotTable, CompareDataFromUsageAndInvoices, \
+    PrepareDataForPivotTableTelecom, CompareDataFromUsageAndUsageGlobalTelecom
 from pages.reports.report_for_comapnies import ReportForCompanies
 from pages.reports.generate_pdf_file import GeneratePdfFile
 from datetime import datetime
 from pages.reports.time_period import add_time_period
+
 # Reszta logiki aplikacji
 
 
@@ -21,14 +23,15 @@ with st.container(border=True):
     month_to_report = st.select_slider(options=month_range, value=(month_range[0], month_range[-1]),
                                        label='Wybierz zakres miesięcy do raportu')
 
-    #tworze podtytul
+    # tworze podtytul
     subtitle = add_time_period(month_to_report, year_to_report)
 
     # pobieram i fitlruje dane na temat odczytow, filtruje tylko po glownych licznikach objektow
     dataForPivotUsage = PrepareDataForPivotTable()
     data_about_usage = dataForPivotUsage.get_data('energy_usage')
     data_to_analyse_usage = dataForPivotUsage.filter_main_energy_meters(data_about_usage)
-    data_to_analyse_usage_filterd = dataForPivotUsage.filter_data_by_years_and_months(data_to_analyse_usage, year_to_report,
+    data_to_analyse_usage_filterd = dataForPivotUsage.filter_data_by_years_and_months(data_to_analyse_usage,
+                                                                                      year_to_report,
                                                                                       month_to_report)
 
     # pobieram dane na temat faktur
@@ -38,14 +41,18 @@ with st.container(border=True):
                                                                                         year_to_report, month_to_report)
 
     # sumuje zuzycie instytucji w miesiacach i latach
-    compareDataUsageInvoices = CompareDataFromUsageAndInvoices(data_to_analyse_usage_filterd, data_about_invoices_filtered)
+    compareDataUsageInvoices = CompareDataFromUsageAndInvoices(data_to_analyse_usage_filterd,
+                                                               data_about_invoices_filtered)
     compareDataUsageInvoices.sum_data_by_company()
     data_compared = compareDataUsageInvoices.compare_data_usage_invoices()
     data_with_extra_calculations = compareDataUsageInvoices.extra_calculations(data_compared)
 
     # tworze zakładki dla poszczególny
-    tab_institute, tab_museum, tab_cob, tab_parich = st.tabs(['Raport kosztów instytutu', 'Raport kosztów Muzeum',
-                                                              'Raport kosztów COB', 'Raport kosztów Parafii'])
+    tab_institute, tab_museum, tab_cob, tab_parich, tab_p4, tab_polkomtel, tab_ptk, tab_tmobile = st.tabs(
+        ['Raport kosztów instytutu', 'Raport kosztów Muzeum',
+         'Raport kosztów COB', 'Raport kosztów Parafii',
+         'Raport kosztów P4', 'Raport kosztów POLKOMTEl',
+         'Raport kosztów PTK', 'Raport kosztow T-MOBILE'])
 
 
     def generate_report(tab, data_from_energy_meters, invoices, category, name):
@@ -74,3 +81,22 @@ with st.container(border=True):
     generate_report(tab_museum, data_with_extra_calculations, data_about_invoices, 'museum', 'MUZEUM JP2')
     report_cob = generate_report(tab_cob, data_with_extra_calculations, data_about_invoices, 'cob', 'COB')
     generate_report(tab_parich, data_with_extra_calculations, data_about_invoices, 'parish', 'PARAFIA')
+
+    # #########################################
+    # sekcje poswiecona raportom dla operatorow
+
+    # pobieram dane o licznikach operatorow
+    dataforpivottelecom = PrepareDataForPivotTableTelecom()
+    data_about_usage_telecom = dataforpivottelecom.get_data('energy_usage')
+    data_to_analyse_usage_telecom = dataforpivottelecom.filter_main_energy_meters(data_about_usage_telecom)
+    data_to_analyse_usage_filterd_telecom = dataforpivottelecom.filter_data_by_years_and_months(
+        data_to_analyse_usage_telecom,
+        year_to_report,
+        month_to_report)
+
+    # poruwnuje dane z podlicznikow z licnzikiem glownym
+    compereddatausagetelecom = CompareDataFromUsageAndUsageGlobalTelecom(data_to_analyse_usage_filterd_telecom,
+                                                                         report_cob)
+    compereddatausagetelecom.sum_data_by_company()
+    data_compared_global = compereddatausagetelecom.compare_data_usage_invoices()
+    st.dataframe(data_compared_global)
