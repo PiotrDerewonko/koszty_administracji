@@ -8,7 +8,6 @@ with st.container(border=True):
     st.markdown('Wykres topologi sieci elektrycznej kompleksu Świątynnego')
     # lacze sie z baza danych i pobieram dane
     conn = connect_to_databse()
-    cursor = conn.cursor()
     sql_file_path = os.path.abspath(
         os.path.join(os.path.dirname(__file__),
                      f'../sql_queries/energy_meters_tree.sql'))

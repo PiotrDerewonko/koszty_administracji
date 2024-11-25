@@ -52,6 +52,7 @@ def add_edit_meter_readings(request, pk=None, is_add_manualy=None):
     if request.method == 'POST' and pk is None and original_form_pk is None:
         form = energymeterform(request.POST)
         # to jest przypadek dla post gdzie jest on przesylany pierwszy raz
+        #TODO sprawdzic czemu nie zapisuje daty odczytu
         if error_message == 'true':
             save_data_meter_readings(energymeterform, pk, request.user)
         else:

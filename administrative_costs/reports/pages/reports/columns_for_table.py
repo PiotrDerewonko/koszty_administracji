@@ -24,7 +24,7 @@ class AddColumnsToTable:
                 self.temporary_table['cost_za energie'] / (
                 1 + (self.temporary_table['stawka_vat_za energie'] / 100))).fillna(0).apply(
             lambda x: f"{locale.format_string('%.2f', x, grouping=True)} zł")
-        description = description + f'''<b>{tmp_text}</b> - Wysokośc netto faktury za energię elektryczną 
+        description = description + f'''<b>{tmp_text}</b> - Wysokość netto faktury za energię elektryczną 
         dla kompleksu COB za miesiąc obrachunkowy<br>'''
         return self.final_table, description
 
@@ -33,7 +33,7 @@ class AddColumnsToTable:
         self.final_table[f'{tmp_text}'] = (self.temporary_table['cost_za przesył'] / (
                 1 + (self.temporary_table['stawka_vat_za przesył'] / 100))).fillna(0).apply(
             lambda x: f"{locale.format_string('%.2f', x, grouping=True)} zł")
-        description = description + f'''<b>{tmp_text}</b> - Wysokośc netto faktury za przesył energii elektrycznej 
+        description = description + f'''<b>{tmp_text}</b> - Wysokość netto faktury za przesył energii elektrycznej 
         dla kompleksu COB za miesiąc obrachunkowy<br>'''
         return self.final_table, description
 
@@ -63,7 +63,7 @@ class AddColumnsToTable:
             f'''{tmp_text}'''] = (
             self.temporary_table[f'%_of_usage_for_{self.company}']).fillna(0).apply(
             lambda x: f"{locale.format_string('%.2f', x, grouping=True)} %")
-        description = description + f'''<b>{tmp_text}</b> - Udział zużycia {self.company_to_table} w calościowym zużyciu
+        description = description + f'''<b>{tmp_text}</b> - Udział zużycia {self.company_to_table} w całościowym zużyciu
          kompleksu wedlug liczników. Sposób liczenia (G / D).<br>'''
         return self.final_table, description
 
@@ -81,7 +81,7 @@ class AddColumnsToTable:
             f'''{tmp_text}'''] = (
             self.temporary_table[f'usage_{self.company}']).fillna(0).apply(
             lambda x: f"{locale.format_string('%.2f', x, grouping=True)} kwh")
-        description = description + f'''<b>{tmp_text}</b> - Ilość energi zużytej przez {self.company} według odczytów 
+        description = description + f'''<b>{tmp_text}</b> - Ilość energi zużytej przez {self.company_to_table} według odczytów 
         liczników.<br>'''
         return self.final_table, description
 

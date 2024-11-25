@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'electricity_cost',
-    'django_bootstrap5'
+    'django_bootstrap5',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -111,8 +112,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Dopasuj do swojej ścieżki w kontenerze
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # lub inna ścieżka
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # katalog na własne pliki statyczne
+]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -141,3 +146,17 @@ LOGGING = {
         },
     },
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8501",  # Jeśli testujesz lokalnie
+    "http://streamlit:8501",
+    "http://localhost:11302",
+    "http://127.0.0.1:11302",
+    # Jeśli używasz nazwy kontenera
+]
+
+X_FRAME_OPTIONS = 'ALLOWALL'  # Zezwól na osadzanie iframe
+
+LOGIN_REDIRECT_URL = '/ele_cost/odczyty/'  # Ścieżka bezwzględna
+
+

@@ -20,6 +20,7 @@ services:
       - media_data:/app/media
     networks:
       - app_network  # Używamy zdefiniowanej sieci
+    restart: always
 
   db:
     image: postgres:latest
@@ -33,6 +34,7 @@ services:
 #      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     networks:
       - app_network  # Używamy tej samej sieci
+    restart: always
 
   streamlit:
     build:
@@ -47,6 +49,7 @@ services:
       - db
     networks:
       - app_network
+    restart: always
 
 
 networks:

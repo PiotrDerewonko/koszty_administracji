@@ -47,6 +47,10 @@ RUN python3 -m venv .venv
 RUN . .venv/bin/activate && pip install -r requirements.txt
 RUN /app/.venv/bin/python -m playwright install
 
+# Kopiowanie pliku konfiguracyjnego Streamlit
+COPY .streamlit/config.toml /root/.streamlit/config.toml
+ENV STREAMLIT_SERVER_ENABLECORS="true"
+ENV STREAMLIT_SERVER_ALLOWORIGIN="http://localhost:8000"
 
 
 # Nadaj uprawnienia do wykonania skryptu start.sh

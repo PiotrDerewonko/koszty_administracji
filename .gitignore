@@ -173,4 +173,8 @@ db.json
 reports/pages/reports/pdf_files/
 #/db.json
 #/administrative_costs/db.json
-
+pass.rtf
+administrative_costs/pass.rtf
+administrative_costs/static
+administrative_costs/staticfiles
+administrative_costs/pass.rtf

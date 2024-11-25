@@ -8,4 +8,4 @@ st.set_page_config(page_title="Moduł raportowania kosztów administracyjnych",
                    layout='wide')
 
 
-st.markdown('test')
+st.page_link('pages/2_reports.py', label='Raport do refakturowania kosztów energii')

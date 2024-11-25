@@ -23,7 +23,6 @@ with st.container(border=True):
 
     #tworze podtytul
     subtitle = add_time_period(month_to_report, year_to_report)
-    st.markdown(subtitle, unsafe_allow_html=True)
 
     # pobieram i fitlruje dane na temat odczytow, filtruje tylko po glownych licznikach objektow
     dataForPivotUsage = PrepareDataForPivotTable()
@@ -68,9 +67,10 @@ with st.container(border=True):
                     file_name=f"Raport dla {name}.pdf",
                     mime="application/pdf",
                 )
+            return report.final_table
 
 
     generate_report(tab_institute, data_with_extra_calculations, data_about_invoices, 'institute', 'IPJP2')
     generate_report(tab_museum, data_with_extra_calculations, data_about_invoices, 'museum', 'MUZEUM JP2')
-    generate_report(tab_cob, data_with_extra_calculations, data_about_invoices, 'cob', 'COB')
+    report_cob = generate_report(tab_cob, data_with_extra_calculations, data_about_invoices, 'cob', 'COB')
     generate_report(tab_parich, data_with_extra_calculations, data_about_invoices, 'parish', 'PARAFIA')

@@ -24,9 +24,17 @@ class ViewListMain(ListView):
 
     def get_context_data(self, **kwargs):
         """
-        pobiera parametr sort
+        pobiera parametr sort, oraz sprawdza czy uzytkownik ma uprawnienia do danego modelu
         """
-        has_permission = self.request.user.has_perm(f'electricity_cost.{self.model}')
+        model_name = self.model._meta.model_name  # Nazwa modelu w małych literach
+        app_label = self.model._meta.app_label  # Nazwa aplikacji, w której jest model
+
+        # Tworzymy klucz uprawnienia
+        permission_codename = f"{app_label}.view_{model_name}"
+
+        # Sprawdzamy, czy użytkownik ma uprawnienie
+        has_permission = self.request.user.has_perm(permission_codename)
+
         context = super().get_context_data(**kwargs)
         sort_param = self.request.GET.get('sort', 'cost')
         context['sort'] = sort_param
