@@ -1,6 +1,6 @@
 import pandas as pd
 
-from pages.reports.columns_for_table import AddColumnsToTable
+from pages.reports.columns_for_table import AddColumnsToTable, AddColumnsForTableTelecom
 
 
 class ReportForCompanies:
@@ -30,7 +30,7 @@ class ReportForCompanies:
 
         columns_from_data_invoices_tmp = data_invoices_tmp.columns.tolist()
 
-        #petla dodajaca suffix, wykorzystywane dalej do wszystkich wylczen
+        # petla dodajaca suffix, wykorzystywane dalej do wszystkich wylczen
         for i in columns_from_data_invoices_tmp:
             data_invoices_tmp = data_invoices_tmp.rename(columns={f'{i}': f'{i}_{type_of_invoice}'})
         self.data_filltered = pd.merge(self.data_filltered, data_invoices_tmp, left_index=True, right_index=True,
@@ -44,7 +44,8 @@ class ReportForCompanies:
         self.final_table['rok'] = self.data_filltered['rok']
         self.final_table['numer miesiąca'] = self.data_filltered['number_of_month']
 
-        add_columns_to_table = AddColumnsToTable(self.final_table, self.data_filltered, self.company, self.company_to_table)
+        add_columns_to_table = AddColumnsToTable(self.final_table, self.data_filltered, self.company,
+                                                 self.company_to_table)
 
         # wartosc brutto faktury za energie
         self.final_table, self.adnotation = add_columns_to_table.add_invoice_for_energy(self.adnotation)
@@ -68,12 +69,13 @@ class ReportForCompanies:
         self.final_table, self.adnotation = add_columns_to_table.usage_energy_for_company(self.adnotation)
 
         # wartosc % zuzycia energi dla firmy
-        self.final_table, self.adnotation = add_columns_to_table.add_percent_of_usage_energy_for_company(self.adnotation)
+        self.final_table, self.adnotation = add_columns_to_table.add_percent_of_usage_energy_for_company(
+            self.adnotation)
 
         # wykosc straty dla firmy
         self.final_table, self.adnotation = add_columns_to_table.add_value_of_difference_for_company(self.adnotation)
 
-        #total energi dla firmy
+        # total energi dla firmy
         self.final_table, self.adnotation = add_columns_to_table.add_total_usage_energy_with_diffrenace(self.adnotation)
 
         # total koszt
@@ -84,3 +86,20 @@ class ReportForCompanies:
 
         # na sam koniec ustawiam rok i miesiac jako index
         self.final_table = self.final_table.set_index(['rok', 'numer miesiąca'])
+
+
+class ReportForCompaniesTelecom(ReportForCompanies):
+    def create_pivot_table(self) -> None:
+        """Metoda tworzy finalną tabele, z finalnymi opisami """
+        self.final_table = pd.DataFrame()
+        self.data_filltered = self.data_calculations.reset_index()
+        self.final_table['rok'] = self.data_filltered['rok']
+        self.final_table['numer miesiąca'] = self.data_filltered['numer miesiąca']
+
+        add_columns_to_table_telecom = AddColumnsForTableTelecom(self.final_table, self.data_filltered, self.company,
+                                                 self.company_to_table)
+        # ilość zużytej energii przez kompleks
+        self.final_table, self.adnotation = add_columns_to_table_telecom.add_total_usege_from_meter_readings(self.adnotation)
+
+        # ilość zużytej energii przez operatora
+        self.final_table, self.adnotation = add_columns_to_table_telecom.add_usage_telecom(self.adnotation)

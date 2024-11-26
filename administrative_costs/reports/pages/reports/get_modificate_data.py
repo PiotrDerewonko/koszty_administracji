@@ -109,7 +109,7 @@ class PrepareDataForPivotTableTelecom(PrepareDataForPivotTable):
 
 
 class CompareDataFromUsageAndUsageGlobalTelecom(CompareDataFromUsageAndInvoices):
-    def sum_data_by_company(self):
+    def sum_data_by_company(self, company):
         """Zadaniem tej metody stworzenie tabeli przestawnej ktora pokaze ile pradu zuzyli poszczegolni
         operatorzy w roku i miesiącu obrachunkowym"""
         self.data_usage_cumulative = pd.pivot_table(self.data_usage, index=['rok', 'number_of_month'],
@@ -117,6 +117,7 @@ class CompareDataFromUsageAndUsageGlobalTelecom(CompareDataFromUsageAndInvoices)
                                                     values=['usage'], aggfunc='sum')
         self.data_usage_cumulative.columns = ['_'.join(col).strip() for col in
                                               self.data_usage_cumulative.columns.values]
+        self.data_usage_cumulative = self.data_usage_cumulative[f'usage_{company}']
 
     def compare_data_usage_invoices(self):
         """Zadanmiem tej metody jest porownanie sumy podlicznikow operator z licznikiem glownym telefonii."""
@@ -134,15 +135,23 @@ class CompareDataFromUsageAndUsageGlobalTelecom(CompareDataFromUsageAndInvoices)
             data_tmp = data_tmp.rename(columns={data_tmp.columns[3]: 'koszt_1_kwh_energia'})
             data_tmp = data_tmp.rename(columns={data_tmp.columns[4]: 'koszt_1_kwh_dystrybucja'})
             data_tmp = data_tmp.rename(columns={data_tmp.columns[5]: 'strata'})
-        data_tmp = data_tmp.replace(r"kwh|%|zł|VAT|\s", "", regex=True)
+        data_tmp = data_tmp.replace(r"kwh|zł|\s", "", regex=True)
         for col in data_tmp.columns:
-            data_tmp[col] = data_tmp[col].replace(',', '.', regex=True).apply(pd.to_numeric, errors='coerce')
+            if col != 'vat':
+                data_tmp[col] = data_tmp[col].replace(',', '.', regex=True).apply(pd.to_numeric, errors='coerce')
 
         self.data_usage_cumulative = self.data_usage_cumulative.reset_index()
         self.data_usage_cumulative = self.data_usage_cumulative.rename(columns={'number_of_month': 'numer miesiąca'})
         self.data_usage_cumulative = self.data_usage_cumulative.set_index(['rok', 'numer miesiąca'])
         data_all = pd.merge(self.data_usage_cumulative, data_tmp, how='left', left_index=True,
                             right_index=True)
+        return data_all
+
+    @staticmethod
+    def extra_calculations_telecom(data_all, company) -> pd.DataFrame:
+        """Metoda dokonuje dodatkowych obiczeń potrzebnych do raportu"""
+        data_all['%_total'] = data_all[f'usage_{company}'] / data_all['energia_kompleks']
+        data_all[f'strata_{company}'] = data_all[f'strata'] * data_all['%_total']
         return data_all
 
 

@@ -163,3 +163,42 @@ class AddColumnsToTable:
             self.final_table[f'{tmp_text}'] = f'VAT {self.final_table["stawka_vat_za energie"].values[0]} %'
         self.final_table = self.final_table.drop(columns=['stawka_vat_za energie', 'stawka_vat_za przesył'])
         return self.final_table
+
+class AddColumnsForTableTelecom(AddColumnsToTable):
+    def __init__(self, final_table: pd.DataFrame, temporary_table: pd.DataFrame, company: str, company_to_table: str):
+        self.final_table = final_table
+        self.temporary_table = temporary_table
+        self.company = company
+        self.company_to_table = company_to_table
+
+    def add_total_usege_from_meter_readings(self, description):
+        tmp_text = 'Zużycie energii kompleksu wg liczników [A]'
+        self.final_table[
+            f'''{tmp_text}'''] = (
+            self.temporary_table['energia_kompleks']).fillna(0).apply(
+            lambda x: f"{locale.format_string('%.2f', x, grouping=True)} kwh")
+        description = description + f'''<b>{tmp_text}</b> - Wartość zużycia kompleksu COB, 
+        według odczytów z liczników<br>'''
+        return self.final_table, description
+
+    def add_usage_telecom(self, description):
+        tmp_text = f'Zużycie energii {self.company_to_table} [B]'
+        self.final_table[
+            f'''{tmp_text}'''] = (
+            self.temporary_table[f'usage_{self.company}']).fillna(0).apply(
+            lambda x: f"{locale.format_string('%.2f', x, grouping=True)} kwh")
+        description = description + f'''<b>{tmp_text}</b> - Wartość zużycia {self.company_to_table}<br>, 
+        według odczytów z licznika<br>'''
+        return self.final_table, description
+
+    def add_vat(self, description):
+        tmp_text = f'Stawki VAT [C]'
+        self.final_table[
+            f'''{tmp_text}'''] = (
+            self.temporary_table[f'usage_{self.company}']).fillna(0).apply(
+            lambda x: f"{locale.format_string('%.2f', x, grouping=True)}")
+        description = description + f'''<b>{tmp_text}</b> - Wartość zużycia {self.company_to_table}<br>, 
+        według odczytów z licznika<br>'''
+        return self.final_table, description
+
+

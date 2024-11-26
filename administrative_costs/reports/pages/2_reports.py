@@ -1,7 +1,7 @@
 import streamlit as st
 from pages.reports.get_modificate_data import PrepareDataForPivotTable, CompareDataFromUsageAndInvoices, \
     PrepareDataForPivotTableTelecom, CompareDataFromUsageAndUsageGlobalTelecom
-from pages.reports.report_for_comapnies import ReportForCompanies
+from pages.reports.report_for_comapnies import ReportForCompanies, ReportForCompaniesTelecom
 from pages.reports.generate_pdf_file import GeneratePdfFile
 from datetime import datetime
 from pages.reports.time_period import add_time_period
@@ -94,9 +94,23 @@ with st.container(border=True):
         year_to_report,
         month_to_report)
 
+
     # poruwnuje dane z podlicznikow z licnzikiem glownym
-    compereddatausagetelecom = CompareDataFromUsageAndUsageGlobalTelecom(data_to_analyse_usage_filterd_telecom,
-                                                                         report_cob)
-    compereddatausagetelecom.sum_data_by_company()
-    data_compared_global = compereddatausagetelecom.compare_data_usage_invoices()
-    st.dataframe(data_compared_global)
+    def generate_report_telecom(company, cob_report, data_to_analyse, tab, company_name):
+        """Zadaniem funkcji jest stworzenie tabeli przestawnej, jako raport do rozliczenia kosztów energii dla
+        operatorów."""
+        with tab:
+            compereddatausagetelecom = CompareDataFromUsageAndUsageGlobalTelecom(data_to_analyse, cob_report)
+            compereddatausagetelecom.sum_data_by_company(company)
+            data_compared_global = compereddatausagetelecom.compare_data_usage_invoices()
+            data_with_extra_calculations_telecom = compereddatausagetelecom.extra_calculations_telecom(
+                data_compared_global, company)
+            st.dataframe(data_with_extra_calculations_telecom)
+            report_telecom = ReportForCompaniesTelecom(data_with_extra_calculations_telecom, None, company,
+                                                       company_name)
+            report_telecom.create_pivot_table()
+            table_in_html = report_telecom.final_table.to_html(classes='table table-bordered', escape=False)
+            st.markdown(table_in_html.replace('<table', '<table style="font-size: 13px;"'), unsafe_allow_html=True)
+
+
+    generate_report_telecom('P4', report_cob, data_to_analyse_usage_filterd_telecom, tab_p4, 'operator P4')
