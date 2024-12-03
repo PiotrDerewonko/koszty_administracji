@@ -37,6 +37,7 @@ class EditInvoiceView(UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         # Sprawdzamy, czy użytkownik ma uprawnienia do edytowania faktur
+        #todo przy edycji to nie dziala, pokazuej caly czas brak upranwien
         if not request.user.has_perm('electricity_cost.edit_invoice'):  # Możesz dodać inne warunki, np. sprawdzenie uprawnień
             # Jeśli użytkownik nie ma uprawnień, przekierowujemy go na stronę z komunikatem
             return render(request,'electricity_cost/brak_uprawnien.html')  # Zastąp odpowiednią stroną/ścieżką

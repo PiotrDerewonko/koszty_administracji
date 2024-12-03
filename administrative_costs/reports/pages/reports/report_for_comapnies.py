@@ -103,3 +103,6 @@ class ReportForCompaniesTelecom(ReportForCompanies):
 
         # ilość zużytej energii przez operatora
         self.final_table, self.adnotation = add_columns_to_table_telecom.add_usage_telecom(self.adnotation)
+
+        # ilość zużytej energii przez operatora
+        self.final_table, self.adnotation =add_columns_to_table_telecom.add_vat(self.adnotation)

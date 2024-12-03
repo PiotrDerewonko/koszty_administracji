@@ -10,4 +10,4 @@ python manage.py runserver 0.0.0.0:8000
 
 # Uruchom Streamlit
 echo "Uruchamianie aplikacji Streamlit..."
-streamlit run /app/reports/main.py --server.address=0.0.0.0
+streamlit run /reports/main.py --server.address=0.0.0.0

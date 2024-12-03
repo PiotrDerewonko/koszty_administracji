@@ -194,9 +194,7 @@ class AddColumnsForTableTelecom(AddColumnsToTable):
     def add_vat(self, description):
         tmp_text = f'Stawki VAT [C]'
         self.final_table[
-            f'''{tmp_text}'''] = (
-            self.temporary_table[f'usage_{self.company}']).fillna(0).apply(
-            lambda x: f"{locale.format_string('%.2f', x, grouping=True)}")
+            f'''{tmp_text}'''] = (self.temporary_table[f'vat'])
         description = description + f'''<b>{tmp_text}</b> - Wartość zużycia {self.company_to_table}<br>, 
         według odczytów z licznika<br>'''
         return self.final_table, description
