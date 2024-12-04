@@ -88,8 +88,10 @@ class AddColumnsToTable:
     def add_value_of_cost_per_1_kwh(self, description):
         tmp_text = f'Koszt netto za 1 kw/h dla {self.company_to_table} [C]'
         self.final_table[f'{tmp_text}'] = (
-                self.temporary_table['cost_per_1_kwh_za energie'] + self.temporary_table[
-            'cost_per_1_kwh_za przesył']).fillna(0).apply(
+                (self.temporary_table['cost_per_1_kwh_za energie'] / (
+                        1 + (self.temporary_table['stawka_vat_za energie'] / 100))) + (self.temporary_table[
+            'cost_per_1_kwh_za przesył']) / (
+                        1 + (self.temporary_table['stawka_vat_za przesył'] / 100))).fillna(0).apply(
             lambda x: f"{locale.format_string('%.4f', x, grouping=True)} zł")
         description = description + f'''<b>{tmp_text}</b> - Wysokość netto kosztu za 1 kwh. Koszt ten uwzględnia zarówno
         koszt faktury za energię jak również dystrubucję. Sposób wyliczenia (A / E) + (B / E).<br>'''
@@ -107,14 +109,20 @@ class AddColumnsToTable:
     def total_cost_for_company(self, description):
         tmp_text = f'Łączny koszt dla {self.company_to_table} [K]'
         self.final_table[f'{tmp_text}'] = (
-                (self.temporary_table[f'usage_{self.company}'] * self.temporary_table[
-                    'cost_per_1_kwh_za energie']) + (
-                        self.temporary_table[f'usage_{self.company}'] * self.temporary_table[
-                    'cost_per_1_kwh_za przesył']) + (
-                        self.temporary_table[f'cost_per_1_kwh_za energie'] * self.temporary_table[
-                    f'difference_for_{self.company}']) + (
-                        self.temporary_table[f'cost_per_1_kwh_za przesył'] * self.temporary_table[
-                    f'difference_for_{self.company}'])).fillna(0).apply(
+                (self.temporary_table[f'usage_{self.company}'] * (self.temporary_table[
+                    'cost_per_1_kwh_za energie']) / (
+                         1 + (self.temporary_table['stawka_vat_za energie'] / 100))) + (
+                        self.temporary_table[f'usage_{self.company}'] *
+                        (self.temporary_table[
+                             'cost_per_1_kwh_za przesył'] / (
+                                 1 + (self.temporary_table[
+                                          'stawka_vat_za energie'] / 100)))) + (
+                        (self.temporary_table[f'cost_per_1_kwh_za energie'] / (
+                                1 + (self.temporary_table['stawka_vat_za energie'] / 100))) * self.temporary_table[
+                            f'difference_for_{self.company}']) + (
+                        (self.temporary_table[f'cost_per_1_kwh_za przesył'] / (
+                                1 + (self.temporary_table['stawka_vat_za energie'] / 100))) * self.temporary_table[
+                            f'difference_for_{self.company}'])).fillna(0).apply(
             lambda x: f"{locale.format_string('%.2f', x, grouping=True)} zł")
         description = description + f'''<b>{tmp_text}</b> - Łączny koszt dla {self.company_to_table}. Sposób liczenia 
         (C * J). <br>'''
@@ -153,8 +161,10 @@ class AddColumnsToTable:
 
     def add_vat_rate(self):
         tmp_text = 'Stawki VAT'
-        self.final_table['stawka_vat_za energie'] = self.temporary_table['stawka_vat_za energie'].astype(int).astype(str)
-        self.final_table['stawka_vat_za przesył'] = self.temporary_table['stawka_vat_za przesył'].astype(int).astype(str)
+        self.final_table['stawka_vat_za energie'] = self.temporary_table['stawka_vat_za energie'].astype(int).astype(
+            str)
+        self.final_table['stawka_vat_za przesył'] = self.temporary_table['stawka_vat_za przesył'].astype(int).astype(
+            str)
         if self.one_vat_rate is False:
             self.final_table[f'{tmp_text}'] = (f'''Vat za energię: ''' + self.final_table['stawka_vat_za energie']
                                                + '''%<br> Vat za przesył: ''' +
