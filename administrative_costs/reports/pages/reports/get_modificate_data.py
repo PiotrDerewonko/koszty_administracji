@@ -1,7 +1,7 @@
 from connections.connect_to_databse import connect_to_databse
 import os
 import pandas as pd
-
+import streamlit as st
 
 class PrepareDataForPivotTable:
     """Zadaniem klasy jest przetowrzenie przekazanych danych na postac tabeli przestawnej. Zalozone czynnosci to
@@ -121,14 +121,14 @@ class CompareDataFromUsageAndUsageGlobalTelecom(CompareDataFromUsageAndInvoices)
 
     def compare_data_usage_invoices(self):
         """Zadanmiem tej metody jest porownanie sumy podlicznikow operator z licznikiem glownym telefonii."""
-        if len(self.data_invoices) <= 12:
+        if len(self.data_invoices.columns) <= 12:
             data_tmp = self.data_invoices.iloc[:, [3, 11, 2, 5]]
             data_tmp = data_tmp.rename(columns={data_tmp.columns[0]: 'energia_kompleks'})
             data_tmp = data_tmp.rename(columns={data_tmp.columns[1]: 'vat'})
             data_tmp = data_tmp.rename(columns={data_tmp.columns[2]: 'koszt_1_kwh'})
             data_tmp = data_tmp.rename(columns={data_tmp.columns[3]: 'strata'})
         else:
-            data_tmp = self.data_invoices.iloc[:, [3, 13, 2, 3, 4, 7]]
+            data_tmp = self.data_invoices.iloc[:, [5, 13, 2, 3, 4, 7]]
             data_tmp = data_tmp.rename(columns={data_tmp.columns[0]: 'energia_kompleks'})
             data_tmp = data_tmp.rename(columns={data_tmp.columns[1]: 'vat'})
             data_tmp = data_tmp.rename(columns={data_tmp.columns[2]: 'koszt_1_kwh'})

@@ -97,12 +97,22 @@ class ReportForCompaniesTelecom(ReportForCompanies):
         self.final_table['numer miesiąca'] = self.data_filltered['numer miesiąca']
 
         add_columns_to_table_telecom = AddColumnsForTableTelecom(self.final_table, self.data_filltered, self.company,
-                                                 self.company_to_table)
+                                                                 self.company_to_table)
         # ilość zużytej energii przez kompleks
-        self.final_table, self.adnotation = add_columns_to_table_telecom.add_total_usege_from_meter_readings(self.adnotation)
+        self.final_table, self.adnotation = add_columns_to_table_telecom.add_total_usege_from_meter_readings(
+            self.adnotation)
 
         # ilość zużytej energii przez operatora
         self.final_table, self.adnotation = add_columns_to_table_telecom.add_usage_telecom(self.adnotation)
 
         # ilość zużytej energii przez operatora
-        self.final_table, self.adnotation =add_columns_to_table_telecom.add_vat(self.adnotation)
+        self.final_table, self.adnotation = add_columns_to_table_telecom.add_vat(self.adnotation)
+
+        # dodanie stawki za 1 kwh
+        self.final_table, self.adnotation = add_columns_to_table_telecom.add_cost_per_1_kwh(self.adnotation)
+
+        #dodanie starty
+        self.final_table, self.adnotation = add_columns_to_table_telecom.add_loss(self.adnotation)
+
+        #dodanie %zuzycia dla operatora
+        self.final_table, self.adnotation = add_columns_to_table_telecom.add_percent_usage(self.adnotation)

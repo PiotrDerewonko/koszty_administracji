@@ -153,8 +153,10 @@ class AddColumnsToTable:
 
     def add_vat_rate(self):
         tmp_text = 'Stawki VAT'
-        self.final_table['stawka_vat_za energie'] = self.temporary_table['stawka_vat_za energie'].astype(int).astype(str)
-        self.final_table['stawka_vat_za przesył'] = self.temporary_table['stawka_vat_za przesył'].astype(int).astype(str)
+        self.final_table['stawka_vat_za energie'] = self.temporary_table['stawka_vat_za energie'].astype(int).astype(
+            str)
+        self.final_table['stawka_vat_za przesył'] = self.temporary_table['stawka_vat_za przesył'].astype(int).astype(
+            str)
         if self.one_vat_rate is False:
             self.final_table[f'{tmp_text}'] = (f'''Vat za energię: ''' + self.final_table['stawka_vat_za energie']
                                                + '''%<br> Vat za przesył: ''' +
@@ -163,6 +165,7 @@ class AddColumnsToTable:
             self.final_table[f'{tmp_text}'] = f'VAT {self.final_table["stawka_vat_za energie"].values[0]} %'
         self.final_table = self.final_table.drop(columns=['stawka_vat_za energie', 'stawka_vat_za przesył'])
         return self.final_table
+
 
 class AddColumnsForTableTelecom(AddColumnsToTable):
     def __init__(self, final_table: pd.DataFrame, temporary_table: pd.DataFrame, company: str, company_to_table: str):
@@ -199,4 +202,44 @@ class AddColumnsForTableTelecom(AddColumnsToTable):
         według odczytów z licznika<br>'''
         return self.final_table, description
 
+    def add_cost_per_1_kwh(self, description):
+        tmp_text = f'Stawka za 1 kwh [D]'
+        self.final_table[
+            f'''{tmp_text}'''] = (
+            self.temporary_table[f'koszt_1_kwh']).fillna(0).apply(
+            lambda x: f"{locale.format_string('%.4f', x, grouping=True)} zł")
+        description = description + f'''<b>{tmp_text}</b> - Wartość natto za 1 kwh (przesył oraz energia)'''
 
+        # jesli tabela ma wiecej kolumn oznacza ze zostaly dodane dodatkowe kolumny z osobna stakwa za energie i za przesyl
+        if len(self.temporary_table.columns) > 10:
+            tmp_text = f'Stawka za 1 kwh energia [D]'
+            self.final_table[
+                f'''{tmp_text}'''] = (
+                self.temporary_table[f'koszt_1_kwh_energia']).fillna(0).apply(
+                lambda x: f"{locale.format_string('%.4f', x, grouping=True)} zł")
+            description = description + f'''<b>{tmp_text}</b> - Wartość natto za 1 kwh energi'''
+            tmp_text = f'Stawka za 1 kwh przesył [D]'
+            self.final_table[
+                f'''{tmp_text}'''] = (
+                self.temporary_table[f'koszt_1_kwh_dystrybucja']).fillna(0).apply(
+                lambda x: f"{locale.format_string('%.4f', x, grouping=True)} zł")
+            description = description + f'''<b>{tmp_text}</b> - Wartość natto za 1 kwh przysyłu enegii'''
+        return self.final_table, description
+
+    def add_loss(self, description):
+        tmp_text = f'Strata na objekcie [E]'
+        self.final_table[
+            f'''{tmp_text}'''] = (
+            self.temporary_table[f'strata']).fillna(0).apply(
+            lambda x: f"{locale.format_string('%.2f', x, grouping=True)} kwh")
+        description = description + f'''<b>{tmp_text}</b> - Wysokość straty na głównych licznikach'''
+        return self.final_table, description
+
+    def add_percent_usage(self, description):
+        tmp_text = f'Udział procentowy {self.company_to_table} w zużyciu całego kompleksu [F]'
+        self.final_table[
+            f'''{tmp_text}'''] = (
+            self.temporary_table[f'usage_{self.company}'] / self.temporary_table['energia_kompleks']).fillna(0).apply(
+            lambda x: f"{locale.format_string('%.2f', x, grouping=True)} %")
+        description = description + f'''<b>{tmp_text}</b> - Wysokość straty na głównych licznikach'''
+        return self.final_table, description
