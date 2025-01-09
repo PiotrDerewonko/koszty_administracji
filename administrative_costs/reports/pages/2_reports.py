@@ -3,6 +3,7 @@ from pages.reports.get_modificate_data import PrepareDataForPivotTable, CompareD
     PrepareDataForPivotTableTelecom, CompareDataFromUsageAndUsageGlobalTelecom
 from pages.reports.report_for_comapnies import ReportForCompanies, ReportForCompaniesTelecom
 from pages.reports.generate_pdf_file import GeneratePdfFile
+from pages.reports.generate_pdf import generate_pdf
 from datetime import datetime
 from pages.reports.time_period import add_time_period
 
@@ -62,18 +63,7 @@ with st.container(border=True):
             report.add_invoices_for_energy('za energie')
             report.add_invoices_for_energy('za przesył')
             report.create_pivot_table()
-            table_in_html = report.final_table.to_html(classes='table table-bordered', escape=False)
-            st.markdown(table_in_html.replace('<table', '<table style="font-size: 13px;"'), unsafe_allow_html=True)
-            st.markdown(report.adnotation, unsafe_allow_html=True)
-            pdf_file = GeneratePdfFile(table_in_html, report.adnotation, f'Raport dla {name} {subtitle}', name)
-            pdf_file.create_pdf()
-            with open(f"./pages/reports/pdf_files/{name}.pdf", "rb") as file:
-                btn = st.download_button(
-                    label=f"Pobierz raport dla {name}",
-                    data=file,
-                    file_name=f"Raport dla {name}.pdf",
-                    mime="application/pdf",
-                )
+            generate_pdf(report, name, subtitle)
             return report.final_table
 
 
@@ -105,12 +95,14 @@ with st.container(border=True):
             data_compared_global = compereddatausagetelecom.compare_data_usage_invoices()
             data_with_extra_calculations_telecom = compereddatausagetelecom.extra_calculations_telecom(
                 data_compared_global, company)
-            st.dataframe(data_with_extra_calculations_telecom)
             report_telecom = ReportForCompaniesTelecom(data_with_extra_calculations_telecom, None, company,
                                                        company_name)
             report_telecom.create_pivot_table()
-            table_in_html = report_telecom.final_table.to_html(classes='table table-bordered', escape=False)
-            st.markdown(table_in_html.replace('<table', '<table style="font-size: 13px;"'), unsafe_allow_html=True)
+            generate_pdf(report_telecom, company, subtitle)
+            return report_telecom.final_table
 
 
     generate_report_telecom('P4', report_cob, data_to_analyse_usage_filterd_telecom, tab_p4, 'operator P4')
+    generate_report_telecom('POLKOMTEL', report_cob, data_to_analyse_usage_filterd_telecom, tab_polkomtel, 'operator POLKOMTEL')
+    generate_report_telecom('PTK', report_cob, data_to_analyse_usage_filterd_telecom, tab_ptk, 'operator PTK')
+    generate_report_telecom('T-MOBILE', report_cob, data_to_analyse_usage_filterd_telecom, tab_tmobile, 'operator T-MOBILE')
