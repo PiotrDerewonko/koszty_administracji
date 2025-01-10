@@ -89,9 +89,12 @@ class AddColumnsToTable:
 
     def add_value_of_cost_per_1_kwh(self, description):
         tmp_text = f'Koszt netto za 1 kw/h dla {self.company_to_table} [C]'
-        self.final_table[f'{tmp_text}'] = (
-                self.temporary_table['cost_per_1_kwh_za energie'] + self.temporary_table[
-            'cost_per_1_kwh_za przesył']).fillna(0).apply(
+        self.temporary_table['cost_per_1_kwh_total'] = ((self.temporary_table['cost_per_1_kwh_za energie'] / (
+                1 + (self.temporary_table['stawka_vat_za energie'] / 100))) +
+                                                        (self.temporary_table['cost_per_1_kwh_za przesył'] / (
+                                                                1 + (self.temporary_table[
+                                                                         'stawka_vat_za przesył'] / 100))))
+        self.final_table[f'{tmp_text}'] = (self.temporary_table['cost_per_1_kwh_total']).fillna(0).apply(
             lambda x: f"{locale.format_string('%.4f', x, grouping=True)} zł")
         description = description + f'''<b>{tmp_text}</b> - Wysokość netto kosztu za 1 kwh. Koszt ten uwzględnia zarówno
         koszt faktury za energię jak również dystrubucję. Sposób wyliczenia (A / E) + (B / E).<br>'''
@@ -108,15 +111,8 @@ class AddColumnsToTable:
 
     def total_cost_for_company(self, description):
         tmp_text = f'Łączny koszt dla {self.company_to_table} [K]'
-        self.final_table[f'{tmp_text}'] = (
-                (self.temporary_table[f'usage_{self.company}'] * self.temporary_table[
-                    'cost_per_1_kwh_za energie']) + (
-                        self.temporary_table[f'usage_{self.company}'] * self.temporary_table[
-                    'cost_per_1_kwh_za przesył']) + (
-                        self.temporary_table[f'cost_per_1_kwh_za energie'] * self.temporary_table[
-                    f'difference_for_{self.company}']) + (
-                        self.temporary_table[f'cost_per_1_kwh_za przesył'] * self.temporary_table[
-                    f'difference_for_{self.company}'])).fillna(0).apply(
+        self.final_table[f'{tmp_text}'] = (self.temporary_table[f'total_usage_for_{self.company}'] *
+                                           self.temporary_table['cost_per_1_kwh_total']).fillna(0).apply(
             lambda x: f"{locale.format_string('%.2f', x, grouping=True)} zł")
         description = description + f'''<b>{tmp_text}</b> - Łączny koszt dla {self.company_to_table}. Sposób liczenia 
         (C * J). <br>'''
@@ -144,10 +140,11 @@ class AddColumnsToTable:
 
     def add_total_usage_energy_with_diffrenace(self, description):
         tmp_text = f'Łączne zużycie energii dla {self.company_to_table} [J]'
+        self.temporary_table[f'total_usage_for_{self.company}'] = (self.temporary_table[f'usage_{self.company}'] +
+                                                                   self.temporary_table[
+                                                                       f'difference_for_{self.company}'])
         self.final_table[
-            f'''{tmp_text}'''] = (
-                self.temporary_table[f'usage_{self.company}'] +
-                self.temporary_table[f'difference_for_{self.company}']).fillna(0).apply(
+            f'''{tmp_text}'''] = (self.temporary_table[f'total_usage_for_{self.company}']).fillna(0).apply(
             lambda x: f"{locale.format_string('%.2f', x, grouping=True)} kwh")
         description = description + f'''<b>{tmp_text}</b> - Wartość zużytej energii przez {self.company_to_table}, 
         według odczytów z liczników oraz wyliczonej straty. Sposób liczenia (G + I).<br>'''

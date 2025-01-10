@@ -4,7 +4,7 @@ import streamlit as st
 
 def connect_to_databse():
     database = config('DATABASE')
-    user = config('USER')
+    user = 'postgres'
     password = config('PASSWORD')
     host= config('HOST')
     port = config('PORT')

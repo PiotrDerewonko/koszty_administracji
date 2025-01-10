@@ -125,3 +125,6 @@ class ReportForCompaniesTelecom(ReportForCompanies):
 
         # calkowity koszt dla operatora
         self.final_table, self.adnotation = add_columns_to_table_telecom.add_total_cost_fot_telecom(self.adnotation)
+
+        # na sam koniec ustawiam rok i miesiac jako index
+        self.final_table = self.final_table.set_index(['rok', 'numer miesiąca'])
